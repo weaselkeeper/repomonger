@@ -25,6 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import os
 import sys
+configfile = '/etc/repomonger.conf'; # Default config file location.
 
 #used in ConfigFile()
 import ConfigParser
@@ -64,3 +65,7 @@ if __name__ == "__main__":
     cmd_parser.add_argument('-c', '--config', dest='config_override',
         action='store', default=None,
         help='Specify a path to an alternate config file')
+    cmd_parser.add_argument('-R','--repo',dest='reponame',
+        action='store',default=None,
+        help='Name of repo to build. See definition in config')
+
