@@ -25,14 +25,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import os
 import sys
-configfile = '/etc/repomonger.conf'; # Default config file location.
+
+# Default config file location.
+configfile = '/etc/repomonger.conf'
 
 #used in ConfigFile()
 import ConfigParser
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
-                    datefmt='%y.%m.%d %H:%M:%S'
+                    datefmt='%y.%m.%d %H:%M:%S')
 
 console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
@@ -40,8 +42,10 @@ logging.getLogger("usefulidiot").addHandler(console)
 log = logging.getLogger("usefulidiot")
 
 
-
-
+def config(config=configfile):
+    # Now parse the config file, extracting the name of the repo, and the list
+    # of files ( and locations)  it should contain.
+    log.debug('building repo %s' % config.repo)
 
 
 # Here we start if called directly (the usual case.)
@@ -50,12 +54,11 @@ if __name__ == "__main__":
 
     import argparse
 
-
-
     cmd_parser = argparse.ArgumentParser(
         description='Time to build a yum repo')
-    cmd_parser.add_argument('-n', '--dry-run',dest='dryrun',
-        action='store_true', help='Dry run, do not actually perform action',default=False)
+    cmd_parser.add_argument('-n', '--dry-run', dest='dryrun',
+        action='store_true', help='Dry run, do not actually perform action',
+        default=False)
     cmd_parser.add_argument('-d', '--debug', dest='debug',
         action='store_true', help='Enable debugging during execution.',
         default=None)
@@ -65,7 +68,6 @@ if __name__ == "__main__":
     cmd_parser.add_argument('-c', '--config', dest='config_override',
         action='store', default=None,
         help='Specify a path to an alternate config file')
-    cmd_parser.add_argument('-R','--repo',dest='reponame',
-        action='store',default=None,
+    cmd_parser.add_argument('-R', '--repo', dest='reponame',
+        action='store', default=None,
         help='Name of repo to build. See definition in config')
-
