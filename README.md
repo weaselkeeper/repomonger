@@ -16,3 +16,8 @@ be machine generated from sources such as koji. Repo-monger will create the dire
 structure, and link the relevant files, then run createrepo on the resultant tree.
 Producing a yum repo that can be served with any decent http server.
 
+Alternatively, each repo can be a document in a mongodb instance, but that's
+for the future
+
+
+
