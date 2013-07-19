@@ -59,14 +59,40 @@ def get_options():
     return args
 
 
+def getpackagelist(src_repo):
+    """ Build a list of the files that are going to be linked or copied"""
+    pkglisting = 'Nothing yet, just building the framework.'
+    pass
+    return pkglisting
+
+def assemble_repo(pkglisting,destdir,link='symlink'):
+    """ copy or link files to cloned location. """
+    pass
+    message,success = 'failed for some reason',1
+    return message,success
+
+def createrepo(destdir):
+    """ Run createrepo on destdir, assembling the bits yum needs"""
+    pass ;#Again, nothing happening yet
+    message,success = 'createrepo failed',1
+    return message,success
+
+
 if "__main__" in __name__:
     args = get_options()
-    print args
-    if not args.source_repo:
-        print 'need a source repo to clone from'
-        sys.exit()
-
     if args.dryrun:
         message = 'dry run only'
         print args
         print message
+        sys.exit(0)
+
+    if not args.source_repo:
+        print 'need a source repo to clone from'
+        sys.exit(1)
+
+    if not args.dest_dir:
+        print 'need a location to clone the repo into.'
+        sys.exit(1)
+
+
+
