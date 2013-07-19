@@ -38,7 +38,6 @@ log = logging.getLogger("clone_repo")
 
 def get_options():
     """ command-line options """
-    usage = "usage: %prog [options]"
     parser = argparse.ArgumentParser(description='Pass cli options to \
         script')
 
@@ -63,7 +62,7 @@ def get_options():
     parser.add_argument('--debug', action="store_true", default=False)
 
     args = parser.parse_args()
-
+    args.usage = ": %prog [options]"
     return args
 
 
@@ -100,22 +99,22 @@ def assemble_repo(pkglisting, destdir, link):
 
     if link == 'copy':
         for pkg in pkglisting:
-            shutil.copy(pkg,destdir)
+            shutil.copy(pkg, destdir)
         message, success = 'pkgs copied', 0
 
     elif link == 'hardlink':
         for pkg in pkglisting:
-            _path,_file = os.path.split(pkg)
+            _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
-            os.link(pkg,linkedfile)
-        message, success = 'pkgs hardinked',0
+            os.link(pkg, linkedfile)
+        message, success = 'pkgs hardinked', 0
 
     elif link == 'symlink':
-        for pkg in pkglisting: 
-            _path,_file = os.path.split(pkg)
+        for pkg in pkglisting:
+            _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
-            os.symlink(pkg,linkedfile)
-        message, success = 'pkgs symlinked',0
+            os.symlink(pkg, linkedfile)
+        message, success = 'pkgs symlinked', 0
     return message, success
 
 
@@ -147,7 +146,7 @@ if "__main__" in __name__:
         sys.exit(0)
 
     if not args.source_repo:
-        print 'need a source repo to clone from'
+        print args.usage + 'need a source repo to clone from'
         sys.exit(1)
     else:
         source_repo = args.source_repo
