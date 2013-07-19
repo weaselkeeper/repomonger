@@ -21,8 +21,8 @@ try:
     import yum
     import createrepo
 except ImportError as error:
-        print 'Python says %s, please ensure you have access to the\
- yum rpm, and createrepo python modules. ' % error
+        log.warn('Python says %s, please ensure you have access to the \
+                 yum rpm, and createrepo python modules. ' % error)
         sys.exit(1)
 
 logging.basicConfig(level=logging.WARN,
@@ -62,7 +62,7 @@ def get_options():
     parser.add_argument('--debug', action="store_true", default=False)
 
     args = parser.parse_args()
-    args.usage = ": %prog [options]"
+    args.usage = "clone_repo.py [options]"
     return args
 
 
@@ -141,18 +141,18 @@ if "__main__" in __name__:
 
     if args.dryrun:
         message = 'dry run only'
-        print args
-        print message
+        log.info(args)
+        log.warn(message)
         sys.exit(0)
 
     if not args.source_repo:
-        print args.usage + 'need a source repo to clone from'
+        log.warn(args.usage + ' : need a source repo to clone from')
         sys.exit(1)
     else:
         source_repo = args.source_repo
 
     if not args.destdir:
-        print 'need a location to clone the repo into.'
+        log.warn(args.usage + ': need a location to clone the repo into.')
         sys.exit(1)
     else:
         destdir = args.destdir
@@ -172,6 +172,6 @@ if "__main__" in __name__:
     pkgs = get_packagelist(args.source_repo)
     # Send package list, along with destdir and linktype
     # to assemble_repo to build the file structure.
-    assemble_repo(pkgs, destdir, link)
+    aprintissemble_repo(pkgs, destdir, link)
 
     create_repo(destdir)
