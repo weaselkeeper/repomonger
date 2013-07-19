@@ -12,11 +12,16 @@ Date:   18 Jul 2013
 
 import os
 import sys
-import yum
-import rpm
 import logging
 import argparse
 
+try:
+    import rpm
+    import yum
+except ImportError as error:
+        print 'Python says %s, please ensure you have access to the\
+ yum and rpm python modules. ' % error
+        sys.exit(1)
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
@@ -34,7 +39,6 @@ def get_options():
     usage = "usage: %prog [options]"
     parser = argparse.ArgumentParser(description='Pass cli options to \
         script')
-
 
     parser.add_argument('-s', '--src', action="store",
                         dest="source_repo", help='Repo to clone.')
