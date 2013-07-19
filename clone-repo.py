@@ -45,7 +45,7 @@ def get_options():
                         dest="source_repo", help='Repo to clone.')
 
     parser.add_argument('-d', '--dst', action="store",
-                        dest="dest_dir", help='Topdir of cloned repo')
+                        dest="destdir", help='Topdir of cloned repo')
 
     parser.add_argument("--linktype",
                         action="store", dest="linktype",
@@ -64,7 +64,7 @@ def get_options():
     return args
 
 
-def getpackagelist(src_repo):
+def get_packagelist(src_repo):
     """ Build a dict of the files that are going to be linked or copied
         packagename = fq_Filename"""
     pkglisting = {}
@@ -76,20 +76,20 @@ def getpackagelist(src_repo):
             fdno = os.open(package, os.O_RDONLY)
             hdr = ts.hdrFromFdno(fdno)
             pkg_name = hdr[rpm.RPMTAG_NAME]
-            pkglisting[pkg_name]=package
+            pkglisting[pkg_name] = package
             os.close(fdno)
-    
+
     return pkglisting
 
 
-def assemble_repo(pkglisting, destdir, link='symlink'):
+def assemble_repo(pkglisting, destdir, link):
     """ copy or link files to cloned location. """
     pass
     message, success = 'failed for some reason', 1
     return message, success
 
 
-def createrepo(destdir):
+def create_repo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
     message, success = 'createrepo failed', 1
 
@@ -113,11 +113,28 @@ if "__main__" in __name__:
     if not args.source_repo:
         print 'need a source repo to clone from'
         sys.exit(1)
+    else:
+        source_repo = args.source_repo
 
-    if not args.dest_dir:
+    if not args.destdir:
         print 'need a location to clone the repo into.'
         sys.exit(1)
+    else:
+        destdir = args.destdir
 
+    if not args.linktype:
+        link = 'symlink'
+    else:
+        l_requested = args.linktype
+        if l_requested == 'hardlink' or 'symlink' or 'copy':
+            link = l_requested
+        else:
+            print 'Incorrect value for linktype, please use symlink, \
+            hardlink,or copy, not %s' % l_requested
+            sys.exit(1)
 
-    pkgs = getpackagelist(args.source_repo)
-    print pkgs
+    # Assemble the package list, with locations
+    pkgs = get_packagelist(args.source_repo)
+    # Send package list, along with destdir and linktype
+    # to assemble_repo to build the file structure.
+    assemble_repo(pkgs, destdir, link)
