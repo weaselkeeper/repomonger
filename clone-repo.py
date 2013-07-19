@@ -18,9 +18,10 @@ import argparse
 try:
     import rpm
     import yum
+    import createrepo
 except ImportError as error:
         print 'Python says %s, please ensure you have access to the\
- yum and rpm python modules. ' % error
+ yum rpm, and createrepo python modules. ' % error
         sys.exit(1)
 
 logging.basicConfig(level=logging.WARN,
@@ -74,13 +75,9 @@ def getpackagelist(src_repo):
             package = src_repo + rpm_pkg
             fdno = os.open(package, os.O_RDONLY)
             hdr = ts.hdrFromFdno(fdno)
-            os.close(fdno)
-            if hdr[rpm.RPMTAG_SOURCERPM]:
-               print "header is from a binary package"
-            else:
-               print "header is from a source package"
             pkg_name = hdr[rpm.RPMTAG_NAME]
             pkglisting[pkg_name]=package
+            os.close(fdno)
     
     return pkglisting
 
@@ -94,8 +91,8 @@ def assemble_repo(pkglisting, destdir, link='symlink'):
 
 def createrepo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
-    pass  # Again, nothing happening yet
     message, success = 'createrepo failed', 1
+
     return message, success
 
 
