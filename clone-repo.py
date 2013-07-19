@@ -15,6 +15,8 @@ import sys
 import yum
 import rpm
 import logging
+import OptionParser
+
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
