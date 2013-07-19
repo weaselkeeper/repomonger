@@ -50,7 +50,7 @@ def get_options():
                         action="store", dest="linktype",
                         default='symlink', help='symlink, hardlink, or copy')
 
-    parser.add_argument('-f','--repofile', action='store_true',default=False,
+    parser.add_argument('-f', '--repofile', action='store_true', default=False,
                         help='enable if you want a <reponame>.repo file for\
                                 use by yum clients')
 
@@ -69,22 +69,26 @@ def getpackagelist(src_repo):
     pass
     return pkglisting
 
-def assemble_repo(pkglisting,destdir,link='symlink'):
+
+def assemble_repo(pkglisting, destdir, link='symlink'):
     """ copy or link files to cloned location. """
     pass
-    message,success = 'failed for some reason',1
-    return message,success
+    message, success = 'failed for some reason', 1
+    return message, success
+
 
 def createrepo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
-    pass ;#Again, nothing happening yet
-    message,success = 'createrepo failed',1
-    return message,success
+    pass  # Again, nothing happening yet
+    message, success = 'createrepo failed', 1
+    return message, success
 
-def create_repofile(reponame,dest_dir):
+
+def create_repofile(reponame, dest_dir):
     """ Create a <name>.repo file to be used by yum on clients """
     repofile = "nothing yet"
     return repofile
+
 
 if "__main__" in __name__:
     args = get_options()
@@ -101,6 +105,3 @@ if "__main__" in __name__:
     if not args.dest_dir:
         print 'need a location to clone the repo into.'
         sys.exit(1)
-
-
-
