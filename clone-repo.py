@@ -11,6 +11,7 @@ Date:   18 Jul 2013
 
 
 import os
+import sys
 import yum
 import rpm
 import logging
