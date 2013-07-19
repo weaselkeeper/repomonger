@@ -15,7 +15,7 @@ import sys
 import yum
 import rpm
 import logging
-import OptionParser
+import argparse
 
 
 logging.basicConfig(level=logging.WARN,
@@ -32,41 +32,37 @@ log = logging.getLogger("clone_repo")
 def get_options():
     """ command-line options """
     usage = "usage: %prog [options]"
-    OptionParser = optparse.OptionParser
-    parser = OptionParser(usage)
+    parser = argparse.ArgumentParser(description='Pass cli options to \
+        script')
 
-    required = optparse.OptionGroup(parser, "Required")
-    optional = optparse.OptionGroup(parser, "Optional")
 
-    required.add_option('-s', '--src', action="store", type="string",
-                        dest="source repo", help='Repo to clone.')
+    parser.add_argument('-s', '--src', action="store",
+                        dest="source_repo", help='Repo to clone.')
 
-    required.add_option('-d', '--dst', action="store", type="string",
+    parser.add_argument('-d', '--dst', action="store",
                         dest="dest_dir", help='Topdir of cloned repo')
 
-    optional.add_option("--linktype",
-                        action="store", type="string", dest="username",
+    parser.add_argument("--linktype",
+                        action="store", dest="linktype",
                         default='symlink', help='symlink, hardlink, or copy')
 
-    optional.add_option('-n', '--dryrun', action="store_true", type=boolean,
+    parser.add_argument('-n', '--dryrun', action="store_true",
                         default=False, help='Dry run will report what it \
                         would do, but makes no changes to the filesystem')
 
-    parser.add_option_group(required)
-    parser.add_option_group(optional)
+    args = parser.parse_args()
 
-    options, args = parser.parse_args()
-
-    if not options.failures:
-        parser.print_help()
-
-    return options, args
+    return args
 
 
 if "__main__" in __name__:
-    options, args = get_options()
+    args = get_options()
+    print args
+    if not args.source_repo:
+        print 'need a source repo to clone from'
+        sys.exit()
 
-    if options.dryrun:
+    if args.dryrun:
         message = 'dry run only'
-    elif options.failures or options.catalog_run_failures:
-        get_failed(cursor)
+        print args
+        print message
