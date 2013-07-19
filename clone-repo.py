@@ -12,6 +12,7 @@ Date:   18 Jul 2013
 
 import os
 import sys
+import shutil
 import logging
 import argparse
 
@@ -47,7 +48,7 @@ def get_options():
     parser.add_argument('-d', '--dst', action="store",
                         dest="destdir", help='Topdir of cloned repo')
 
-    parser.add_argument("--linktype",
+    parser.add_argument("-l", "--linktype",
                         action="store", dest="linktype",
                         default='symlink', help='symlink, hardlink, or copy')
 
@@ -59,7 +60,7 @@ def get_options():
                         default=False, help='Dry run will report what it \
                         would do, but makes no changes to the filesystem')
 
-    parser.add_argument('--debug', action="store_true",default=False)
+    parser.add_argument('--debug', action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -95,15 +96,36 @@ def assemble_repo(pkglisting, destdir, link):
         if not os.path.exists(destdir):
             os.makedirs(destdir)
     except:
-        log.warn('Can not create dir %s' % destdir )
+        log.warn('Can not create dir %s' % destdir)
+
+    if link == 'copy':
+        for pkg in pkglisting:
+            shutil.copy(pkg,destdir)
+        message, success = 'pkgs copied', 0
+
+    elif link == 'hardlink':
+        for pkg in pkglisting:
+            _path,_file = os.path.split(pkg)
+            linkedfile = destdir + '/' + _file
+            os.link(pkg,linkedfile)
+        message, success = 'pkgs hardinked',0
+
+    elif link == 'symlink':
+        for pkg in pkglisting: 
+            _path,_file = os.path.split(pkg)
+            linkedfile = destdir + '/' + _file
+            os.symlink(pkg,linkedfile)
+        message, success = 'pkgs symlinked',0
     return message, success
 
 
 def create_repo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
     message, success = 'createrepo failed', 1
-
-    return message, success
+    import subprocess
+    mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
+        stdout = subprocess.PIPE).communicate()[0]
+    return mkrepo, success
 
 
 def create_repofile(reponame, dest_dir):
@@ -152,3 +174,5 @@ if "__main__" in __name__:
     # Send package list, along with destdir and linktype
     # to assemble_repo to build the file structure.
     assemble_repo(pkgs, destdir, link)
+
+    create_repo(destdir)
