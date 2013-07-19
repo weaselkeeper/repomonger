@@ -113,7 +113,11 @@ def assemble_repo(pkglisting, destdir, link):
         for pkg in pkglisting:
             _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
-            os.symlink(pkg, linkedfile)
+            try:
+                os.symlink(pkg, linkedfile)
+            except OSError,e:
+                log.warn(str(e))
+                break
         message, success = 'pkgs symlinked', 0
     return message, success
 
