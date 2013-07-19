@@ -59,6 +59,8 @@ def get_options():
                         default=False, help='Dry run will report what it \
                         would do, but makes no changes to the filesystem')
 
+    parser.add_argument('--debug', action="store_true",default=False)
+
     args = parser.parse_args()
 
     return args
@@ -79,10 +81,10 @@ def get_packagelist(src_repo):
             except rpm.error, e:
                 # Eating errors from signed packages where
                 # we don't have the key
-                print package, e
+                log.debug(package + " " + str(e))
             pkglisting.append(package)
             os.close(fdno)
-    print pkglisting
+    log.debug(pkglisting)
     return pkglisting
 
 
@@ -107,6 +109,10 @@ def create_repofile(reponame, dest_dir):
 
 if "__main__" in __name__:
     args = get_options()
+
+    if args.debug:
+        log.setLevel(logging.DEBUG)
+
     if args.dryrun:
         message = 'dry run only'
         print args
