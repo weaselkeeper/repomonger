@@ -172,6 +172,6 @@ if "__main__" in __name__:
     pkgs = get_packagelist(args.source_repo)
     # Send package list, along with destdir and linktype
     # to assemble_repo to build the file structure.
-    aprintissemble_repo(pkgs, destdir, link)
+    assemble_repo(pkgs, destdir, link)
 
     create_repo(destdir)
