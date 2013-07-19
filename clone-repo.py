@@ -67,24 +67,27 @@ def get_options():
 def get_packagelist(src_repo):
     """ Build a dict of the files that are going to be linked or copied
         packagename = fq_Filename"""
-    pkglisting = {}
+    pkglisting = []
     pkgs = os.listdir(src_repo)
     for rpm_pkg in pkgs:
         if rpm_pkg.endswith('.rpm'):
             ts = rpm.TransactionSet()
-            package = src_repo + rpm_pkg
+            package = src_repo + '/' + rpm_pkg
             fdno = os.open(package, os.O_RDONLY)
-            hdr = ts.hdrFromFdno(fdno)
-            pkg_name = hdr[rpm.RPMTAG_NAME]
-            pkglisting[pkg_name] = package
+            try:
+                hdr = ts.hdrFromFdno(fdno)
+            except rpm.error, e:
+                # Eating errors from signed packages where
+                # we don't have the key
+                print package, e
+            pkglisting.append(package)
             os.close(fdno)
-
+    print pkglisting
     return pkglisting
 
 
 def assemble_repo(pkglisting, destdir, link):
     """ copy or link files to cloned location. """
-    pass
     message, success = 'failed for some reason', 1
     return message, success
 
