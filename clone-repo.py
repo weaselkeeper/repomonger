@@ -91,6 +91,11 @@ def get_packagelist(src_repo):
 def assemble_repo(pkglisting, destdir, link):
     """ copy or link files to cloned location. """
     message, success = 'failed for some reason', 1
+    try:
+        if not os.path.exists(destdir):
+            os.makedirs(destdir)
+    except:
+        log.warn('Can not create dir %s' % destdir )
     return message, success
 
 
