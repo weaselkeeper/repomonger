@@ -50,6 +50,10 @@ def get_options():
                         action="store", dest="linktype",
                         default='symlink', help='symlink, hardlink, or copy')
 
+    parser.add_argument('-f','--repofile', action='store_true',default=False,
+                        help='enable if you want a <reponame>.repo file for\
+                                use by yum clients')
+
     parser.add_argument('-n', '--dryrun', action="store_true",
                         default=False, help='Dry run will report what it \
                         would do, but makes no changes to the filesystem')
@@ -77,6 +81,10 @@ def createrepo(destdir):
     message,success = 'createrepo failed',1
     return message,success
 
+def create_repofile(reponame,dest_dir):
+    """ Create a <name>.repo file to be used by yum on clients """
+    repofile = "nothing yet"
+    return repofile
 
 if "__main__" in __name__:
     args = get_options()
