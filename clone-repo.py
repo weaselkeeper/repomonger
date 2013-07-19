@@ -64,9 +64,24 @@ def get_options():
 
 
 def getpackagelist(src_repo):
-    """ Build a list of the files that are going to be linked or copied"""
-    pkglisting = 'Nothing yet, just building the framework.'
-    pass
+    """ Build a dict of the files that are going to be linked or copied
+        packagename = fq_Filename"""
+    pkglisting = {}
+    pkgs = os.listdir(src_repo)
+    for rpm_pkg in pkgs:
+        if rpm_pkg.endswith('.rpm'):
+            ts = rpm.TransactionSet()
+            package = src_repo + rpm_pkg
+            fdno = os.open(package, os.O_RDONLY)
+            hdr = ts.hdrFromFdno(fdno)
+            os.close(fdno)
+            if hdr[rpm.RPMTAG_SOURCERPM]:
+               print "header is from a binary package"
+            else:
+               print "header is from a source package"
+            pkg_name = hdr[rpm.RPMTAG_NAME]
+            pkglisting[pkg_name]=package
+    
     return pkglisting
 
 
@@ -105,3 +120,7 @@ if "__main__" in __name__:
     if not args.dest_dir:
         print 'need a location to clone the repo into.'
         sys.exit(1)
+
+
+    pkgs = getpackagelist(args.source_repo)
+    print pkgs
