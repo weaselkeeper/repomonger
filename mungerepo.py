@@ -42,9 +42,8 @@ class ConfigFile(object):
     def __init__(self, filename):
         """Initialize ConfigFile object"""
         log.debug('in ConfigFile().init(self, %s)' % filename)
-
-    self.filename = filename
-    self.configparser = self.get_config(filename)
+        self.filename = filename
+        self.configparser = self.get_config(filename)
 
     def get_config(self, configfile):
         """ Load config file for parsing """
