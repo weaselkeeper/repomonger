@@ -240,10 +240,10 @@ if "__main__" in __name__:
             sys.exit(1)
 
     # Assemble the package list, with locations
-    pkgs = get_packagelist(args.source_repo)
+    pkgs = mungerepo().get_packagelist(args.source_repo)
     # Send package list, along with destdir and linktype
     # to assemble_repo to build the file structure.
 
-    assemble_repo(pkgs, destdir, link)
+    mungerepo().assemble_repo(pkgs, destdir, link)
 
-    create_repo(destdir)
+    mungerepo().create_repo(destdir)
