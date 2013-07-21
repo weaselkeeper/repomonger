@@ -17,14 +17,9 @@ import logging
 import argparse
 import ConfigParser
 
-try:
-    import rpm
-    import yum
-    import createrepo
-except ImportError as error:
-        log.warn('Python says %s, please ensure you have access to the \
-                 yum rpm, and createrepo python modules. ' % error)
-        sys.exit(1)
+import rpm
+import yum
+import createrepo
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
@@ -35,35 +30,6 @@ console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
 logging.getLogger("clone_repo").addHandler(console)
 log = logging.getLogger("clone_repo")
-
-
-class mungerepo(object):
-    """ repo object, allows us to manipulate, clone, edit, a repo """
-    log.debug('mungerepo class')
-
-    def __init__(self, plugin, path):
-        """ initialize the repo
-        Plugin lets us munge a repo in various ways, create, clone, destroy,
-        edit """
-        log.debug('in mungerepo().__init__')
-        import imp
-        self.module = imp.load_source(plugin,path)
-
-    def run(self):
-        """ execute the plugin's run method """
-        log.debug('In mungerepo().run()')
-        self.status, self.message = self.module.run(self.options)
-
-    def get_run_status(self):
-        """ Retreive the return status/message of the moduel that was
-        executed"""
-        log.debug('in mungerepo().get_run_status*(')
-
-        final_status = {}
-        final_status['status'] = self.status
-        final_status['message'] = self.message
-
-        return final_status
 
 
 class ConfigFile(object):
@@ -85,7 +51,7 @@ class ConfigFile(object):
         log.debug('in ConfigFile().get_config(self, %s)' % configfile)
         config = ConfigParser.ConfigParser()
         config.read(configfile)
-        log..debug('returning config %s' % config)
+        log.debug('returning config %s' % config)
         return config
 
     def get_item(self, cfgitem, section='default', hard_fail=False):
@@ -113,8 +79,100 @@ class ConfigFile(object):
         return item
 
 
+class mungerepo(object):
+    """ repo object, allows us to manipulate, clone, edit, a repo """
+    log.debug('mungerepo class')
 
-# From here on is original clone_repo stuff.  Need to start munging
+    def __init__(self, plugin, path):
+        """ initialize the repo
+        Plugin lets us munge a repo in various ways, create, clone, destroy,
+        edit """
+        log.debug('in mungerepo().__init__')
+        import imp
+        self.module = imp.load_source(plugin, path)
+
+    def run(self):
+        """ execute the plugin's run method """
+        log.debug('In mungerepo().run()')
+        self.status, self.message = self.module.run(self.options)
+
+    def get_run_status(self):
+        """ Retreive the return status/message of the moduel that was
+        executed"""
+        log.debug('in mungerepo().get_run_status*(')
+
+        final_status = {}
+        final_status['status'] = self.status
+        final_status['message'] = self.message
+
+        return final_status
+
+    def assemble_repo(pkglisting, destdir, link):
+        """ copy or link files to cloned location. """
+        message, success = 'failed for some reason', 1
+        try:
+            if not os.path.exists(destdir):
+                os.makedirs(destdir)
+        except:
+            log.warn('Can not create dir %s' % destdir)
+
+        if link == 'copy':
+            for pkg in pkglisting:
+                shutil.copy(pkg, destdir)
+            message, success = 'pkgs copied', 0
+
+        elif link == 'hardlink':
+            for pkg in pkglisting:
+                _path, _file = os.path.split(pkg)
+                linkedfile = destdir + '/' + _file
+                os.link(pkg, linkedfile)
+            message, success = 'pkgs hardinked', 0
+
+        elif link == 'symlink':
+            for pkg in pkglisting:
+                _path, _file = os.path.split(pkg)
+                linkedfile = destdir + '/' + _file
+                try:
+                    os.symlink(pkg, linkedfile)
+                except OSError, e:
+                    log.warn(str(e))
+                    break
+            message, success = 'pkgs symlinked', 0
+        return message, success
+
+    def get_packagelist(src_repo):
+        """ Build a dict of the files that are going to be linked or copied
+            packagename = fq_Filename"""
+        pkglisting = []
+        pkgs = os.listdir(src_repo)
+        for rpm_pkg in pkgs:
+            if rpm_pkg.endswith('.rpm'):
+                ts = rpm.TransactionSet()
+                package = src_repo + '/' + rpm_pkg
+                fdno = os.open(package, os.O_RDONLY)
+                try:
+                    hdr = ts.hdrFromFdno(fdno)
+                except rpm.error, e:
+                    # Eating errors from signed packages where
+                    # we don't have the key
+                    log.debug(package + " " + str(e))
+                pkglisting.append(package)
+                os.close(fdno)
+        log.debug(pkglisting)
+        return pkglisting
+
+    def create_repo(destdir):
+        """ Run createrepo on destdir, assembling the bits yum needs"""
+        message, success = 'createrepo failed', 1
+        import subprocess
+        mkrepo = subprocess.Popen(['/usr/bin/createrepo', destdir],
+                                  stdout=subprocess.PIPE).communicate()[0]
+        return mkrepo, success
+
+    def create_repofile(reponame, dest_dir):
+        """ Create a <name>.repo file to be used by yum on clients """
+        repofile = "nothing yet"
+        return repofile
 
 
 def get_options():
@@ -145,77 +203,6 @@ def get_options():
     args = parser.parse_args()
     args.usage = "clone_repo.py [options]"
     return args
-
-
-def get_packagelist(src_repo):
-    """ Build a dict of the files that are going to be linked or copied
-        packagename = fq_Filename"""
-    pkglisting = []
-    pkgs = os.listdir(src_repo)
-    for rpm_pkg in pkgs:
-        if rpm_pkg.endswith('.rpm'):
-            ts = rpm.TransactionSet()
-            package = src_repo + '/' + rpm_pkg
-            fdno = os.open(package, os.O_RDONLY)
-            try:
-                hdr = ts.hdrFromFdno(fdno)
-            except rpm.error, e:
-                # Eating errors from signed packages where
-                # we don't have the key
-                log.debug(package + " " + str(e))
-            pkglisting.append(package)
-            os.close(fdno)
-    log.debug(pkglisting)
-    return pkglisting
-
-
-def assemble_repo(pkglisting, destdir, link):
-    """ copy or link files to cloned location. """
-    message, success = 'failed for some reason', 1
-    try:
-        if not os.path.exists(destdir):
-            os.makedirs(destdir)
-    except:
-        log.warn('Can not create dir %s' % destdir)
-
-    if link == 'copy':
-        for pkg in pkglisting:
-            shutil.copy(pkg, destdir)
-        message, success = 'pkgs copied', 0
-
-    elif link == 'hardlink':
-        for pkg in pkglisting:
-            _path, _file = os.path.split(pkg)
-            linkedfile = destdir + '/' + _file
-            os.link(pkg, linkedfile)
-        message, success = 'pkgs hardinked', 0
-
-    elif link == 'symlink':
-        for pkg in pkglisting:
-            _path, _file = os.path.split(pkg)
-            linkedfile = destdir + '/' + _file
-            try:
-                os.symlink(pkg, linkedfile)
-            except OSError,e:
-                log.warn(str(e))
-                break
-        message, success = 'pkgs symlinked', 0
-    return message, success
-
-
-def create_repo(destdir):
-    """ Run createrepo on destdir, assembling the bits yum needs"""
-    message, success = 'createrepo failed', 1
-    import subprocess
-    mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
-        stdout = subprocess.PIPE).communicate()[0]
-    return mkrepo, success
-
-
-def create_repofile(reponame, dest_dir):
-    """ Create a <name>.repo file to be used by yum on clients """
-    repofile = "nothing yet"
-    return repofile
 
 
 if "__main__" in __name__:
@@ -257,6 +244,7 @@ if "__main__" in __name__:
     pkgs = get_packagelist(args.source_repo)
     # Send package list, along with destdir and linktype
     # to assemble_repo to build the file structure.
+
     assemble_repo(pkgs, destdir, link)
 
     create_repo(destdir)
