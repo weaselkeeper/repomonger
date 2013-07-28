@@ -2,7 +2,7 @@ Name:           repomonger
 Version:        0.1
 Release:        0
 Summary:        A few python scripts for yum repo clone/copy/assemble
-License:        GPLv3
+License:        GPLv2
 URL:            https://github.com/weaselkeeper/repomonger
 Group:          System Environment/Base
 Source0:        %{name}-%{version}.tar.bz2
