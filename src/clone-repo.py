@@ -4,6 +4,7 @@ clones the repo in the source directory, to the dest. Then reruns create repo
 against it.  Every package in src_repo is linked or copied (default, symlink,
 hardlink and copy are optional)
 
+License: GPL V2 See LICENSE file
 Author: Jim Richardson <weaselkeeper@gmail.com>
 Date:   18 Jul 2013
 

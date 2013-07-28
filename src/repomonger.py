@@ -3,9 +3,9 @@
 
 """
 
-:License: GPL V2 See LICENSE file
-:author: Jim Richardson
-:email: weaselkeeper@gmail.com
+License: GPL V2 See LICENSE file
+Author: Jim Richardson
+email: weaselkeeper@gmail.com
 
 """
 import os
