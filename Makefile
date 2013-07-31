@@ -85,9 +85,9 @@ rpm: sources build-rpm
 clean:
 	@echo "cleaning up "
 	@/bin/rm -rf $(WORKDIR) building $(NAME)
-	@cd $(BASEDIR) && rm -rf BUILD_TEMP && rm -f AUTHORS.TXT $(NAME)-$(VERSION)*.tar.bz2
+	@cd $(BASEDIR) && rm -rf BUILD_TEMP && rm -f AUTHORS.TXT $(NAME)-$(VERSION)*.tar.bz2 $(NAME)-$(VERSION)*rpm* $(NAME)-$(VERSION)*deb*
 	@find $(BASEDIR) -iname *.py[co] | xargs -i rm -f {}
-	@ rm -rf noarch
+	@rm -rf noarch
 
 # Usage
 help:
