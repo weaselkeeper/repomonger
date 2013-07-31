@@ -30,7 +30,7 @@ rm -rf %{buildroot}
 %{__mkdir_p} %{buildroot}%{_localstatedir}/log/repomonger
 #cp -r ./plugins/*.py %{buildroot}%{_datadir}/repomonger/plugins/
 cp -r ./*.py %{buildroot}%{_bindir}/
-cp -r ./config/* %{buildroot}%{_sysconfdir}/repomonger
+cp -r ./*.conf %{buildroot}%{_sysconfdir}/repomonger
 
 %files
 %{_bindir}/*.py
