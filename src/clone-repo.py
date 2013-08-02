@@ -22,7 +22,7 @@ try:
     import yum
     import createrepo
 except ImportError as error:
-        log.warn('Python says %s, please ensure you have access to the \
+        logging.warn('Python says %s, please ensure you have access to the \
                  yum rpm, and createrepo python modules. ' % error)
         sys.exit(1)
 
@@ -35,7 +35,6 @@ console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
 logging.getLogger("clone_repo").addHandler(console)
 log = logging.getLogger("clone_repo")
-
 
 def get_options():
     """ command-line options """
