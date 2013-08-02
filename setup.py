@@ -20,7 +20,7 @@ setup(name = "repomonger",
     packages = ['repomonger'],
     classifiers = [
         'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Development Status :: 5 - Production/Stable',
-        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Development Status :: 4 - Beta',
+        'Topic :: Utilities',
         'Programming Language :: Python'],
 )
