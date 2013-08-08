@@ -10,12 +10,10 @@ email: weaselkeeper@gmail.com
 """
 import os
 import sys
+import logging
 
-# Default config file location.
-configfile = '/etc/repomonger.conf'
 
-#used in ConfigFile()
-import ConfigParser
+
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
@@ -27,9 +25,12 @@ logging.getLogger("usefulidiot").addHandler(console)
 log = logging.getLogger("usefulidiot")
 
 
-def config(config=configfile):
-    # Now parse the config file, extracting the name of the repo, and the list
-    # of files ( and locations)  it should contain.
+def config():
+    # Now parse the config file.  Get any and all info from config file.
+    from ConfigParser SafeConfigParser
+    parser = SafeConfigParser()
+    config = '/etc/repomonger.conf'
+
     log.debug('building repo %s' % config.repo)
 
 
