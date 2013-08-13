@@ -30,8 +30,7 @@ def config():
     from ConfigParser SafeConfigParser
     parser = SafeConfigParser()
     config = '/etc/repomonger.conf'
-
-    log.debug('building repo %s' % config.repo)
+    log.warn('building repo %s' % config.repo)
 
 
 # Here we start if called directly (the usual case.)
