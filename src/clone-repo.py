@@ -81,7 +81,7 @@ def get_packagelist(src_repo):
             except rpm.error, e:
                 # Eating errors from signed packages where
                 # we don't have the key
-                log.debug(package + " " + str(e))
+                log.warn(package + " " + str(e))
             pkglisting.append(package)
             os.close(fdno)
     log.debug(pkglisting)
@@ -130,12 +130,14 @@ def create_repo(destdir):
     import subprocess
     mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
         stdout = subprocess.PIPE).communicate()[0]
+    log.warn('creating repo located at %s' % destdir)
     return mkrepo, success
 
 
 def create_repofile(reponame, dest_dir):
     """ Create a <name>.repo file to be used by yum on clients """
     repofile = "nothing yet"
+    log.warn('Repo file created for repo %s' % reponame)
     return repofile
 
 
