@@ -81,7 +81,7 @@ def get_packagelist(src_repo):
             except rpm.error, e:
                 # Eating errors from signed packages where
                 # we don't have the key
-                log.debug(package + " " + str(e))
+                log.warn(package + " " + str(e))
             pkglisting.append(package)
             os.close(fdno)
     log.debug(pkglisting)
@@ -93,7 +93,9 @@ def assemble_repo(pkglisting, destdir, link):
     message, success = 'failed for some reason', 1
     try:
         if not os.path.exists(destdir):
+            log.warn('destdir %s does not exist, creating it' % destdir)        
             os.makedirs(destdir)
+
     except:
         log.warn('Can not create dir %s' % destdir)
 
@@ -128,12 +130,14 @@ def create_repo(destdir):
     import subprocess
     mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
         stdout = subprocess.PIPE).communicate()[0]
+    log.warn('creating repo located at %s' % destdir)
     return mkrepo, success
 
 
 def create_repofile(reponame, dest_dir):
     """ Create a <name>.repo file to be used by yum on clients """
     repofile = "nothing yet"
+    log.warn('Repo file created for repo %s' % reponame)
     return repofile
 
 
@@ -177,5 +181,5 @@ if "__main__" in __name__:
     # Send package list, along with destdir and linktype
     # to assemble_repo to build the file structure.
     assemble_repo(pkgs, destdir, link)
-
+    # And finaly, create the repo.
     create_repo(destdir)

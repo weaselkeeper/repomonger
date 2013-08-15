@@ -11,9 +11,7 @@ email: weaselkeeper@gmail.com
 import os
 import sys
 import logging
-
-
-
+from pymongo import Connection
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
@@ -27,11 +25,13 @@ log = logging.getLogger("usefulidiot")
 
 def config():
     # Now parse the config file.  Get any and all info from config file.
-    from ConfigParser SafeConfigParser
+    from ConfigParser import SafeConfigParser
     parser = SafeConfigParser()
-    config = '/etc/repomonger.conf'
-
-    log.debug('building repo %s' % config.repo)
+    if os.path.isfile('/etc/repomonger.conf'):
+        config = '/etc/repomonger.conf'
+    else:
+        config = '/etc/repomonger.conf'
+    log.warn('building repo %s' % config.repo)
 
 
 # Here we start if called directly (the usual case.)
