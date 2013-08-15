@@ -1,9 +1,9 @@
 Name:           repomonger
-Version:        0.1
+Version:        0.2
 Release:        0
 Summary:        A few python scripts for yum repo clone/copy/assemble
 License:        GPLv2
-URL:            https://github.com/weaselkeeper/repomonger
+URL:            https://github.com/weaselkeeper/%{name}
 Group:          System Environment/Base
 Source0:        %{name}-%{version}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-root-%(%{__id_u} -n)
@@ -25,17 +25,17 @@ repos.
 rm -rf %{buildroot}
 
 %{__mkdir_p} %{buildroot}%{_bindir}
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/repomonger
-#%{__mkdir_p} %{buildroot}%{_datadir}/repomonger/plugins
-%{__mkdir_p} %{buildroot}%{_localstatedir}/log/repomonger
-#cp -r ./plugins/*.py %{buildroot}%{_datadir}/repomonger/plugins/
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/%{name}
+#%{__mkdir_p} %{buildroot}%{_datadir}/%{name}/plugins
+%{__mkdir_p} %{buildroot}%{_localstatedir}/log/%{name}
+#cp -r ./plugins/*.py %{buildroot}%{_datadir}/%{name}/plugins/
 cp -r ./*.py %{buildroot}%{_bindir}/
-cp -r ./*.conf %{buildroot}%{_sysconfdir}/repomonger
+cp -r ./*.conf %{buildroot}%{_sysconfdir}/%{name}
 
 %files
 %{_bindir}/*.py
-%{_sysconfdir}/repomonger/*
-#%{_datadir}/repomonger/*
+%{_sysconfdir}/%{name}/*
+#%{_datadir}/%{name}/*
 
 %pre
 
@@ -45,5 +45,8 @@ cp -r ./*.conf %{buildroot}%{_sysconfdir}/repomonger
 rm -rf %{buildroot}
 
 %changelog
+* Thu Aug 14 2013 Jim Richardson <weaselkeeper@gmail.com> - 0.2
+- Cleanup of build/spec
+
 * Sat Jul 27 2013 Jim Richardson <weaselkeeper@gmail.com> - 0.1
 - Initial RPM build structure added.
