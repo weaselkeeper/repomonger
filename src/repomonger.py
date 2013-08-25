@@ -11,7 +11,11 @@ email: weaselkeeper@gmail.com
 import os
 import sys
 import logging
-from pymongo import Connection
+try:
+    from pymongo import Connection
+except ImportError as e:
+    print 'Failed import of pymmongo, system says %s' % e
+    sys.exit(1)
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
