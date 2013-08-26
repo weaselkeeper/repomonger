@@ -78,7 +78,7 @@ if __name__ == "__main__":
         help='Name of repo to build. See definition in config')
 
     args = parser.parse_args()
-    args.usage = "check_unmonitored.py [options]"
+    args.usage = "repomonger.py [options]"
 
 
     if args.debug:
