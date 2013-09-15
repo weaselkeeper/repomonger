@@ -18,17 +18,21 @@ except ImportError as e:
     print 'Failed import of pymmongo, system says %s' % e
     sys.exit(1)
 
-logging.basicConfig(level=logging.WARN,
-                    format='%(asctime)s %(levelname)s - %(message)s',
-                    datefmt='%y.%m.%d %H:%M:%S')
 
-console = logging.StreamHandler(sys.stderr)
-console.setLevel(logging.WARN)
-logging.getLogger("usefulidiot").addHandler(console)
-log = logging.getLogger("usefulidiot")
+def run():
+    # This is where we init stuff, logging, config file parsing, etc.
+    logging.basicConfig(level=logging.WARN,
+                        format='%(asctime)s %(levelname)s - %(message)s',
+                        datefmt='%y.%m.%d %H:%M:%S')
+
+    console = logging.StreamHandler(sys.stderr)
+    console.setLevel(logging.WARN)
+    logging.getLogger("usefulidiot").addHandler(console)
+    log = logging.getLogger("usefulidiot")
 
 ### Set some variables and constants.
-CONFIGFILE = '/etc/repomonger/repomonger.conf'
+    CONFIGFILE = '/etc/repomonger/repomonger.conf'
+    return log, CONFIGFILE
 
 
 def get_config(args,CONFIGFILE):
@@ -57,6 +61,8 @@ def get_config(args,CONFIGFILE):
 # Here we start if called directly (the usual case.)
 if __name__ == "__main__":
     """This is where we will begin when called from CLI"""
+
+    log, config = run()
 
     import argparse
 
