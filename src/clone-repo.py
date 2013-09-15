@@ -14,8 +14,8 @@ Date:   18 Jul 2013
 import os
 import sys
 import shutil
+from ConfigParser import SafeConfigParser
 import logging
-import argparse
 
 try:
     import rpm
@@ -26,15 +26,23 @@ except ImportError as error:
                  yum rpm, and createrepo python modules. ' % error)
         sys.exit(1)
 
-logging.basicConfig(level=logging.WARN,
-                    format='%(asctime)s %(levelname)s - %(message)s',
-                    datefmt='%y.%m.%d %H:%M:%S'
-                    )
 
-console = logging.StreamHandler(sys.stderr)
-console.setLevel(logging.WARN)
-logging.getLogger("clone_repo").addHandler(console)
-log = logging.getLogger("clone_repo")
+def run():
+    # This is where we init stuff, logging, config file parsing, etc.
+    logging.basicConfig(level=logging.WARN,
+                        format='%(asctime)s %(levelname)s - %(message)s',
+                        datefmt='%y.%m.%d %H:%M:%S'
+                        )
+
+    console = logging.StreamHandler(sys.stderr)
+    console.setLevel(logging.WARN)
+    logging.getLogger("clone_repo").addHandler(console)
+    log = logging.getLogger("clone_repo")
+
+
+    ### Set some variables and constants.
+    CONFIGFILE = '/etc/repomonger/repomonger.conf'
+    return log, CONFIGFILE
 
 def get_options():
     """ command-line options """
@@ -142,6 +150,10 @@ def create_repofile(reponame, dest_dir):
 
 
 if "__main__" in __name__:
+    """This is where we will begin when called from CLI"""
+
+    log,config = run()
+    import argparse
     args = get_options()
 
     if args.debug:
