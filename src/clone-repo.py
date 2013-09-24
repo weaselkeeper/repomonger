@@ -130,11 +130,13 @@ def assemble_repo(pkglisting, destdir, link):
 
 def create_repo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
-    message, success = 'createrepo failed', 1
     import subprocess
-    mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
-        stdout = subprocess.PIPE).communicate()[0]
-    log.warn('creating repo located at %s' % destdir)
+    try:
+        mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
+        success = subprocess.PIPE).communicate()[0]
+    except:
+        log.warn('something went wrong with creating repo %s' % destdir)
+        mkrepo,success = 'making repo failed', 1
     return mkrepo, success
 
 
