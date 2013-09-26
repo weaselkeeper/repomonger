@@ -19,20 +19,26 @@ except ImportError as e:
     sys.exit(1)
 
 
-def run():
-    # This is where we init stuff, logging, config file parsing, etc.
-    logging.basicConfig(level=logging.WARN,
-                        format='%(asctime)s %(levelname)s - %(message)s',
-                        datefmt='%y.%m.%d %H:%M:%S')
+# Setup some basic default stuff
+CONFIGFILE = '/etc/repomonger/repomonger.conf'
 
-    console = logging.StreamHandler(sys.stderr)
-    console.setLevel(logging.WARN)
-    logging.getLogger("usefulidiot").addHandler(console)
-    log = logging.getLogger("usefulidiot")
 
-### Set some variables and constants.
-    CONFIGFILE = '/etc/repomonger/repomonger.conf'
-    return log, CONFIGFILE
+""" Setup logging """
+logging.basicConfig(level=logging.WARN,
+                    format='%(asctime)s %(levelname)s - %(message)s',
+                    datefmt='%y.%m.%d %H:%M:%S')
+
+# Setup logging to console.
+console = logging.StreamHandler(sys.stderr)
+console.setLevel(logging.WARN)
+logging.getLogger(PROJECTNAME).addHandler(console)
+log = logging.getLogger(PROJECTNAME)
+
+
+
+def run(args):
+        """ placeholder, need to flesh this out"""
+        log.debug('in run(), running')
 
 
 def get_config(args,CONFIGFILE):
@@ -62,7 +68,7 @@ def get_config(args,CONFIGFILE):
 if __name__ == "__main__":
     """This is where we will begin when called from CLI"""
 
-    log, config = run()
+    run()
 
     import argparse
 
