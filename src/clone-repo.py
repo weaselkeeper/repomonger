@@ -147,10 +147,19 @@ def create_repofile(reponame, dest_dir):
     return repofile
 
 
+def run(destdir, source_repo, linktype='symlink'):
+    # Assemble the package list, with locations
+    pkgs = get_packagelist(args.source_repo)
+    # Send package list, along with destdir and linktype
+    # to assemble_repo to build the file structure.
+    assemble_repo(pkgs, destdir, link)
+    # And finaly, create the repo.
+    create_repo(destdir)
+
+
 if "__main__" in __name__:
     """This is where we will begin when called from CLI"""
 
-    log,config = run()
     import argparse
     args = get_options()
 
@@ -186,10 +195,5 @@ if "__main__" in __name__:
             hardlink,or copy, not %s' % l_requested
             sys.exit(1)
 
-    # Assemble the package list, with locations
-    pkgs = get_packagelist(args.source_repo)
-    # Send package list, along with destdir and linktype
-    # to assemble_repo to build the file structure.
-    assemble_repo(pkgs, destdir, link)
-    # And finaly, create the repo.
-    create_repo(destdir)
+    # and do the needful
+    run(destdir,source_repo,link)
