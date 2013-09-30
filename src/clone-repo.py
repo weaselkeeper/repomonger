@@ -42,6 +42,7 @@ except ImportError as error:
 
 def get_options():
     """ command-line options """
+    log.debug('Entering get_options()')
     parser = argparse.ArgumentParser(description='Pass cli options to \
         script')
 
@@ -67,13 +68,14 @@ def get_options():
 
     args = parser.parse_args()
     args.usage = "clone_repo.py [options]"
-    logging.debug(args)
+    logging.debug('Exiting get_options with args %s' % args)
     return args
 
 
 def get_packagelist(src_repo):
     """ Build a dict of the files that are going to be linked or copied
         packagename = fq_Filename"""
+    log.debug('Entering get_packagelist()')
     pkglisting = []
     pkgs = os.listdir(src_repo)
     for rpm_pkg in pkgs:
@@ -89,12 +91,13 @@ def get_packagelist(src_repo):
                 log.warn(package + " " + str(e))
             pkglisting.append(package)
             os.close(fdno)
-    log.debug(pkglisting)
+    log.debug('Exiting get_packagelist, with pkglisting %s' % pkglisting)
     return pkglisting
 
 
 def assemble_repo(pkglisting, destdir, link):
     """ copy or link files to cloned location. """
+    log.debug('Entering assemble_repo()')
     message, success = 'failed for some reason', 1
     try:
         if not os.path.exists(destdir):
@@ -129,12 +132,13 @@ def assemble_repo(pkglisting, destdir, link):
                 log.warn(str(e))
                 break
         message, success = 'pkgs symlinked', 0
-        log.debug('In assemble_repo, trying to %s rpm pkgs, received message %s ' % (link, message))
+    log.debug('Exiting assemble_repo(), trying to %s rpm pkgs, received message %s ' % (link, message))
     return message, success
 
 
 def create_repo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
+    log.debug('Entering create_repo()')
     import subprocess
     try:
         mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
@@ -142,19 +146,22 @@ def create_repo(destdir):
     except:
         log.warn('something went wrong with creating repo %s' % destdir)
         mkrepo, success = 'making repo failed', 1
-    log.debug(mkrepo)
+    log.debug('Exiting create_repo with the message %s about %s' % (message, mkrepo))
     return mkrepo, success
 
 
 def create_repofile(reponame, dest_dir):
     """ Create a <name>.repo file to be used by yum on clients """
+    log.debug('Entering create_repofile()')
     repofile = "TODO"
     log.warn('Repo file created for repo %s' % reponame)
     log.warn(repofile)
+    log.debug('Exiting create_repofile() with nothing done yet')
     return repofile
 
 
 def run(destdir, source_repo, linktype='symlink'):
+    log.debug('Entering run()')
     # Assemble the package list, with locations
     pkgs = get_packagelist(args.source_repo)
     # Send package list, along with destdir and linktype
@@ -162,7 +169,7 @@ def run(destdir, source_repo, linktype='symlink'):
     assemble_repo(pkgs, destdir, link)
     # And finaly, create the repo.
     create_repo(destdir)
-    log.debug('In run(), creating repo %s from pkglist %s' %(pkgs, destdir))
+    log.debug('Exiting run(), creating repo %s from pkglist %s' %(pkgs, destdir))
 
 
 if "__main__" in __name__:
