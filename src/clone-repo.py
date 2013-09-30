@@ -104,6 +104,7 @@ def assemble_repo(pkglisting, destdir, link):
     except:
         log.warn('Can not create dir %s' % destdir)
 
+    log.debug('in assemble_repo(), message is %s' % message)
     if link == 'copy':
         for pkg in pkglisting:
             shutil.copy(pkg, destdir)
@@ -115,7 +116,6 @@ def assemble_repo(pkglisting, destdir, link):
             _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
             os.link(pkg, linkedfile)
-        log.debug(message)
         message, success = 'pkgs hardinked', 0
 
     elif link == 'symlink':
@@ -129,7 +129,7 @@ def assemble_repo(pkglisting, destdir, link):
                 log.warn(str(e))
                 break
         message, success = 'pkgs symlinked', 0
-        log.debug(message)
+        log.debug('In assemble_repo, trying to %s rpm pkgs, received message %s ' % (link, message)
     return message, success
 
 
@@ -141,7 +141,7 @@ def create_repo(destdir):
         success = subprocess.PIPE).communicate()[0]
     except:
         log.warn('something went wrong with creating repo %s' % destdir)
-        mkrepo,success = 'making repo failed', 1
+        mkrepo, success = 'making repo failed', 1
     log.debug(mkrepo)
     return mkrepo, success
 
