@@ -129,7 +129,7 @@ def assemble_repo(pkglisting, destdir, link):
                 log.warn(str(e))
                 break
         message, success = 'pkgs symlinked', 0
-        log.debug('In assemble_repo, trying to %s rpm pkgs, received message %s ' % (link, message)
+        log.debug('In assemble_repo, trying to %s rpm pkgs, received message %s ' % (link, message))
     return message, success
 
 
