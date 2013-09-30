@@ -67,6 +67,7 @@ def get_options():
 
     args = parser.parse_args()
     args.usage = "clone_repo.py [options]"
+    logging.debug(args)
     return args
 
 
