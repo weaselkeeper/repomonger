@@ -45,10 +45,10 @@ def get_options():
     parser = argparse.ArgumentParser(description='Pass cli options to \
         script')
 
-    parser.add_argument('-s', '--src', action="store",
+    parser.add_argument('-S', '--src', action="store",
                         dest="source_repo", help='Repo to clone.')
 
-    parser.add_argument('-d', '--dst', action="store",
+    parser.add_argument('-D', '--dst', action="store",
                         dest="destdir", help='Topdir of cloned repo')
 
     parser.add_argument("-l", "--linktype",
@@ -63,7 +63,7 @@ def get_options():
                         default=False, help='Dry run will report what it \
                         would do, but makes no changes to the filesystem')
 
-    parser.add_argument('--debug', action="store_true", default=False)
+    parser.add_argument('-d', '--debug', action="store_true", default=False)
 
     args = parser.parse_args()
     args.usage = "clone_repo.py [options]"
