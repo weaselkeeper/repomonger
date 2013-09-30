@@ -91,7 +91,7 @@ def get_packagelist(src_repo):
                 log.warn(package + " " + str(e))
             pkglisting.append(package)
             os.close(fdno)
-    log.debug('Exiting get_packagelist, with pkglisting %s' % pkglisting)
+    log.debug('Exiting get_packagelist')
     return pkglisting
 
 
@@ -139,16 +139,18 @@ def assemble_repo(pkglisting, destdir, link):
 
 def create_repo(destdir):
     """ Run createrepo on destdir, assembling the bits yum needs"""
+    message,success = 'starting to create repo', 1
     log.debug('Entering create_repo()')
     import subprocess
     try:
         mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
-        success = subprocess.PIPE).communicate()[0]
+            stdout = subprocess.PIPE).communicate()[0]
+        success = 0
     except:
         log.warn('something went wrong with creating repo %s' % destdir)
-        mkrepo, success = 'making repo failed', 1
-    log.debug('Exiting create_repo with the message %s about %s' % (message, mkrepo))
-    return mkrepo, success
+        message, success = 'making repo failed', 1
+    log.debug('Exiting create_repo with the message %s ' % message)
+    return message, success
 
 
 def create_repofile(reponame, dest_dir):
@@ -170,7 +172,7 @@ def run(destdir, source_repo, linktype='symlink'):
     assemble_repo(pkgs, destdir, link)
     # And finaly, create the repo.
     create_repo(destdir)
-    log.debug('Exiting run(), creating repo %s from pkglist %s' %(pkgs, destdir))
+    log.debug('Exiting run()')
 
 
 if "__main__" in __name__:
