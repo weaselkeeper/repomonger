@@ -107,6 +107,7 @@ def assemble_repo(pkglisting, destdir, link):
     if link == 'copy':
         for pkg in pkglisting:
             shutil.copy(pkg, destdir)
+        log.debug(message)
         message, success = 'pkgs copied', 0
 
     elif link == 'hardlink':
@@ -114,6 +115,7 @@ def assemble_repo(pkglisting, destdir, link):
             _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
             os.link(pkg, linkedfile)
+        log.debug(message)
         message, success = 'pkgs hardinked', 0
 
     elif link == 'symlink':
@@ -121,11 +123,13 @@ def assemble_repo(pkglisting, destdir, link):
             _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
             try:
+        
                 os.symlink(pkg, linkedfile)
             except OSError,e:
                 log.warn(str(e))
                 break
         message, success = 'pkgs symlinked', 0
+        log.debug(message)
     return message, success
 
 
@@ -138,13 +142,15 @@ def create_repo(destdir):
     except:
         log.warn('something went wrong with creating repo %s' % destdir)
         mkrepo,success = 'making repo failed', 1
+    log.debug(mkrepo)
     return mkrepo, success
 
 
 def create_repofile(reponame, dest_dir):
     """ Create a <name>.repo file to be used by yum on clients """
-    repofile = "nothing yet"
+    repofile = "TODO"
     log.warn('Repo file created for repo %s' % reponame)
+    log.warn(repofile)
     return repofile
 
 
@@ -156,6 +162,7 @@ def run(destdir, source_repo, linktype='symlink'):
     assemble_repo(pkgs, destdir, link)
     # And finaly, create the repo.
     create_repo(destdir)
+    log.debug('In run(), creating repo %s from pkglist %s' %(pkgs, destdir))
 
 
 if "__main__" in __name__:
