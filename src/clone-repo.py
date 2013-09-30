@@ -98,20 +98,21 @@ def get_packagelist(src_repo):
 def assemble_repo(pkglisting, destdir, link):
     """ copy or link files to cloned location. """
     log.debug('Entering assemble_repo()')
-    message, success = 'failed for some reason', 1
+    message, success = 'Beginning to assemble repo', 1
     try:
         if not os.path.exists(destdir):
             log.warn('destdir %s does not exist, creating it' % destdir)        
             os.makedirs(destdir)
+            message = ('%s created' % destdir)
 
     except:
-        log.warn('Can not create dir %s' % destdir)
+        message = ('Can not create dir %s' % destdir)
 
     log.debug('in assemble_repo(), message is %s' % message)
+ 
     if link == 'copy':
         for pkg in pkglisting:
             shutil.copy(pkg, destdir)
-        log.debug(message)
         message, success = 'pkgs copied', 0
 
     elif link == 'hardlink':
