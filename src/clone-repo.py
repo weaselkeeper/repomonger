@@ -33,11 +33,12 @@ CONFIGFILE = '/etc/repomonger/repomonger.conf'
 try:
     import rpm
     import yum
+    # Import createrepo class, but for now, use a shell out
     import createrepo
 except ImportError as error:
-        logging.warn('Python says %s, please ensure you have access to the \
+    logging.warn('Python says %s, please ensure you have access to the \
                  yum rpm, and createrepo python modules. ' % error)
-        sys.exit(1)
+    sys.exit(1)
 
 
 def get_options():
@@ -66,10 +67,10 @@ def get_options():
 
     parser.add_argument('-d', '--debug', action="store_true", default=False)
 
-    args = parser.parse_args()
-    args.usage = "clone_repo.py [options]"
-    logging.debug('Exiting get_options with args %s' % args)
-    return args
+    _args = parser.parse_args()
+    _args.usage = "clone_repo.py [options]"
+    logging.debug('Exiting get_options with args %s' % _args)
+    return _args
 
 
 def get_packagelist(src_repo):
@@ -84,6 +85,7 @@ def get_packagelist(src_repo):
             package = src_repo + '/' + rpm_pkg
             fdno = os.open(package, os.O_RDONLY)
             try:
+                # Ensuring this is an RPM pkg, not just some file with rpm ext.
                 hdr = ts.hdrFromFdno(fdno)
             except rpm.error, e:
                 # Eating errors from signed packages where
@@ -95,83 +97,83 @@ def get_packagelist(src_repo):
     return pkglisting
 
 
-def assemble_repo(pkglisting, destdir, link):
+def assemble_repo(pkglisting, _dir, linktype):
     """ copy or link files to cloned location. """
     log.debug('Entering assemble_repo()')
-    message, success = 'Beginning to assemble repo', 1
+    msg, success = 'Beginning to assemble repo', 1
     try:
-        if not os.path.exists(destdir):
-            log.warn('destdir %s does not exist, creating it' % destdir)        
-            os.makedirs(destdir)
-            message = ('%s created' % destdir)
+        if not os.path.exists(_dir):
+            log.warn('destdir %s does not exist, creating it' % _dir)
+            os.makedirs(_dir)
+            msg = ('%s created' % _dir)
 
     except:
-        message = ('Can not create dir %s' % destdir)
+        msg = ('Can not create dir %s' % _dir)
 
-    log.debug('in assemble_repo(), message is %s' % message)
- 
-    if link == 'copy':
+    log.debug('in assemble_repo(), message is %s' % msg)
+
+    if linktype == 'copy':
         for pkg in pkglisting:
             shutil.copy(pkg, destdir)
-        message, success = 'pkgs copied', 0
+        msg, success = 'pkgs copied', 0
 
-    elif link == 'hardlink':
+    elif linktype == 'hardlink':
         for pkg in pkglisting:
             _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
             os.link(pkg, linkedfile)
-        message, success = 'pkgs hardinked', 0
+        msg, success = 'pkgs hardinked', 0
 
-    elif link == 'symlink':
+    elif linktype == 'symlink':
         for pkg in pkglisting:
             _path, _file = os.path.split(pkg)
             linkedfile = destdir + '/' + _file
             try:
-        
+
                 os.symlink(pkg, linkedfile)
-            except OSError,e:
+            except OSError, e:
                 log.warn(str(e))
                 break
-        message, success = 'pkgs symlinked', 0
-    log.debug('Exiting assemble_repo(), trying to %s rpm pkgs, received message %s ' % (link, message))
-    return message, success
+        msg, success = 'pkgs symlinked', 0
+    log.debug('Exiting assemble_repo(), trying to %s rpm pkgs, received message %s ' % (linktype, msg))
+    return msg, success
 
 
-def create_repo(destdir):
-    """ Run createrepo on destdir, assembling the bits yum needs"""
-    message,success = 'starting to create repo', 1
+def create_repo(_dir):
+    """ Run createrepo on _dir, assembling the bits yum needs"""
+    msg, success = 'starting to create repo', 1
     log.debug('Entering create_repo()')
     import subprocess
     try:
-        mkrepo = subprocess.Popen(['/usr/bin/createrepo',destdir],
+        mkrepo = subprocess.Popen(['/usr/bin/createrepo', _dir],
             stdout = subprocess.PIPE).communicate()[0]
         success = 0
     except:
-        log.warn('something went wrong with creating repo %s' % destdir)
-        message, success = 'making repo failed', 1
-    log.debug('Exiting create_repo with the message %s ' % message)
-    return message, success
+        log.warn('something went wrong with creating repo %s' % _dir)
+        msg, success = 'making repo failed', 1
+    log.debug('Exiting create_repo with the msg %s ' % msg)
+    return msg, success
 
 
-def create_repofile(reponame, dest_dir):
+def create_repofile(reponame, _dir):
     """ Create a <name>.repo file to be used by yum on clients """
     log.debug('Entering create_repofile()')
     repofile = "TODO"
     log.warn('Repo file created for repo %s' % reponame)
     log.warn(repofile)
-    log.debug('Exiting create_repofile() with nothing done yet')
+    log.debug('Exiting create_repofile() didn\'t touch %s' % _dir )
     return repofile
 
 
-def run(destdir, source_repo, linktype='symlink'):
+def run(_dir, source_repo, linktype='symlink'):
     log.debug('Entering run()')
     # Assemble the package list, with locations
     pkgs = get_packagelist(args.source_repo)
-    # Send package list, along with destdir and linktype
+    # Send package list, along with _dir and linktype
     # to assemble_repo to build the file structure.
-    assemble_repo(pkgs, destdir, link)
+    assemble_repo(pkgs, _dir, link)
     # And finaly, create the repo.
-    create_repo(destdir)
+    create_repo(_dir)
     log.debug('Exiting run()')
 
 
@@ -214,4 +216,4 @@ if "__main__" in __name__:
             sys.exit(1)
 
     # and do the needful
-    run(destdir,source_repo,link)
+    run(destdir, source_repo, link)
