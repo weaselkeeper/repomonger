@@ -1,0 +1,24 @@
+### Commented entries have reasonable defaults.
+### Uncomment to edit them.
+# Source: <source package name; defaults to package name>
+Section: misc
+Priority: optional
+Homepage: https://github.com/weaselkeeper/repomonger
+Standards-Version: 3.9.2
+
+Package: repomonger
+Version: 0.2
+Maintainer: Jim Richardson <weaselkeeper@gmail.com>
+Depends: python
+Architecture: all
+Copyright: LICENSE
+# Changelog: <changelog file; defaults to a generic changelog>
+Readme: README.md
+Files: repomonger.conf /etc/repomonger
+ clone-repo.py /usr/bin
+ repomonger.py /usr/bin
+
+Description: Basic rpm/yum repo management tools.
+ Create, clone and copy rpm/yum repos
+ .
+ Simple tools to create/clone or copy rpm/yum repos.
