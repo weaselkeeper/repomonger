@@ -139,10 +139,10 @@ def assemble_repo(pkglisting, _dir, linktype):
     return msg, success
 
 
-def create_repo(_dir):
+def create_repo_Shellout(_dir):
     """ Run createrepo on _dir, assembling the bits yum needs"""
     msg, success = 'starting to create repo', 1
-    log.debug('Entering create_repo()')
+    log.debug('Entering create_repo_Shellout()')
     import subprocess
     try:
         mkrepo = subprocess.Popen(['/usr/bin/createrepo', _dir],
@@ -151,9 +151,21 @@ def create_repo(_dir):
     except:
         log.warn('something went wrong with creating repo %s' % _dir)
         msg, success = 'making repo failed', 1
-    log.debug('Exiting create_repo with the msg %s ' % msg)
+    log.debug('Exiting create_repo_Shellout with the msg %s ' % msg)
     return msg, success
 
+def create_repo(_dir):
+    """ Run createrepo on _dir, assembling the bits yum needs"""
+    msg, success = 'starting to create repo', 1
+    log.debug('Entering create_repo()')
+    try:
+        pass
+        #Do createrepo stuff, the pythonic way
+    except:
+        log.warn('something went wrong with creating repo %s' % _dir)
+        msg, success = 'making repo failed', 1
+    log.debug('Exiting create_repo() with the msg %s ' % msg)
+    return msg, success
 
 def create_repofile(reponame, _dir):
     """ Create a <name>.repo file to be used by yum on clients """
@@ -171,9 +183,9 @@ def run(_dir, source_repo, linktype='symlink'):
     pkgs = get_packagelist(args.source_repo)
     # Send package list, along with _dir and linktype
     # to assemble_repo to build the file structure.
-    assemble_repo(pkgs, _dir, link)
+    assemble_repo(pkgs, _dir, linktype)
     # And finaly, create the repo.
-    create_repo(_dir)
+    create_repo_Shellout(_dir)
     log.debug('Exiting run()')
 
 
