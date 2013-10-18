@@ -6,11 +6,11 @@ SHELL := /bin/bash
 SPECFILE = $(firstword $(wildcard *.spec))
 WORKDIR := $(shell pwd)/work
 SRCRPMDIR ?= $(shell pwd)
-SPECFILE = packaging/rpm/repomonger.spec
+SPECFILE = packaging/rpm/$(NAME).spec
 
 DEBFULLNAME=Jim Richardson
 DEBEMAIL=weaselkeeper@gmail.com
-SOURCE_URL=https://github.com/weaselkeeper/repomonger.git
+SOURCE_URL=https://github.com/weaselkeeper/$(NAME).git
 BASEDIR := $(shell git rev-parse --show-toplevel)
 
 BUILDDIR ?= $(WORKDIR)
@@ -50,14 +50,14 @@ authors:
 
 common: authors
 
-
+testall: authors deb srpm rpm
 
 # Build targets
 
 # Debian related.
 deb: common
-	cd $(BASEDIR) && mkdir -p BUILD_TEMP/debian && echo 'setting up temp build env'
-	cd BUILD_TEMP/debian
+	cp src/* LICENSE conf/* README.md packaging/deb
+	cd $(BASEDIR)/packaging/deb && equivs-build $(NAME)
 
 # Redhat related
 build-srpm:
@@ -88,6 +88,7 @@ clean:
 	@cd $(BASEDIR) && rm -rf BUILD_TEMP && rm -f AUTHORS.TXT $(NAME)-$(VERSION)*.tar.bz2 $(NAME)-$(VERSION)*rpm* $(NAME)-$(VERSION)*deb*
 	@find $(BASEDIR) -iname *.py[co] | xargs -i rm -f {}
 	@rm -rf noarch
+	@rm -f packaging/deb/*py packaging/deb/*conf packaging/deb/LICENSE packaging/deb/README.md packaging/deb/*.deb
 
 # Usage
 help:
@@ -95,19 +96,8 @@ help:
 	@echo ' builds from current source tree.'
 	@echo "Usage: make <target>"
 	@echo "Available targets are:"
+	@echo "	deb			Create deb"
 	@echo "	sources			Create tarball"
 	@echo "	srpm			Create srpm"
 	@echo "	rpm			Create rpm"
 	@echo "	clean			Remove work dir"
-
-
-###########
-## Build packages
-
-
-#rpm: common
-#	cd $(BASEDIR) && mkdir -p BUILD_TEMP/rpm
-#	cd BUILD_TEMP/rpm
-#	git archive HEAD --format tar.gz --output $(NAME)-$(VERSION)_$(RELEASE).tar.gz
-
-

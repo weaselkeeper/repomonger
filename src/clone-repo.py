@@ -45,7 +45,6 @@ except ImportError as error:
                  yum rpm, and createrepo python modules. ' % error)
     sys.exit(1)
 
-
 class MDCallBack(object):
     """cli callback object for createrepo, stolen shamelessly from upstream"""
     def errorlog(self, thing):
@@ -62,7 +61,6 @@ class MDCallBack(object):
         left = 80 - len(beg)
         sys.stdout.write("\r%s%-*.*s" % (beg, left, left, item))
         sys.stdout.flush()
-
 
 def get_options():
     """ command-line options """
@@ -132,7 +130,6 @@ def assemble_repo(pkglisting, _dir, linktype):
 
     except:
         msg = ('Can not create dir %s' % _dir)
-
     log.debug('in assemble_repo(), message is %s' % msg)
 
     if linktype == 'copy':
@@ -194,9 +191,6 @@ def create_repo(clone_target, clone_dest):
 
     except:
         log.warn('something went wrong with creating repo %s' % clone_target)
-        msg, success = 'making repo failed', 1
-    log.debug('Exiting create_repo() with the msg %s ' % msg)
-    return msg, success
 
 def create_repofile(reponame, _dir):
     """ Create a <name>.repo file to be used by yum on clients """
