@@ -12,6 +12,7 @@ import os
 import sys
 from ConfigParser import SafeConfigParser
 import logging
+PROJECTNAME = 'repomonger'
 try:
     from pymongo import Connection
 except ImportError as e:
@@ -37,8 +38,8 @@ log = logging.getLogger(PROJECTNAME)
 
 
 def run(args):
-        """ placeholder, need to flesh this out"""
-        log.debug('in run(), running')
+    """ placeholder, need to flesh this out"""
+    log.debug('in run(), running')
 
 
 def get_config(args,CONFIGFILE):
@@ -68,7 +69,6 @@ def get_config(args,CONFIGFILE):
 if __name__ == "__main__":
     """This is where we will begin when called from CLI"""
 
-    run()
 
     import argparse
 
@@ -101,3 +101,5 @@ if __name__ == "__main__":
         CONFIGFILE = args.config
 
     _parse_config = get_config(args,CONFIGFILE)
+
+    run(args)
