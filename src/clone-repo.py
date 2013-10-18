@@ -39,6 +39,7 @@ try:
     from createrepo import MDError
     from createrepo.utils import errorprint, _
     import yum.misc
+    import time
 
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
@@ -173,7 +174,6 @@ def create_repo(clone_target, clone_dest):
         try:
             mdgen = createrepo.SplitMetaDataGenerator(config_obj=conf,
                                                           callback=MDCallBack())
-            print mdgen
         except:
             log.warn('something when wrong with mdgen creation')
 
