@@ -180,7 +180,7 @@ def create_repofile(reponame, _dir):
 def run(_dir, source_repo, linktype='symlink'):
     log.debug('Entering run()')
     # Assemble the package list, with locations
-    pkgs = get_packagelist(args.source_repo)
+    pkgs = get_packagelist(source_repo)
     # Send package list, along with _dir and linktype
     # to assemble_repo to build the file structure.
     assemble_repo(pkgs, _dir, linktype)
