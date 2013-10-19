@@ -37,7 +37,7 @@ try:
     import createrepo
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
-                 yum rpm, and createrepo python modules. ' % error)
+                 yum rpm, and createrepo python modules.' , error)
     sys.exit(1)
 
 
@@ -69,7 +69,7 @@ def get_options():
 
     _args = parser.parse_args()
     _args.usage = "clone_repo.py [options]"
-    logging.debug('Exiting get_options with args %s' % _args)
+    logging.debug('Exiting get_options with args %s', _args)
     return _args
 
 
@@ -170,7 +170,7 @@ def create_repo(_dir):
 def create_repofile(reponame, _dir):
     """ Create a <name>.repo file to be used by yum on clients """
     log.debug('Entering create_repofile()')
-    repofile = "TODO"
+    repofile = 'TODO'
     log.warn('Repo file created for repo %s' % reponame)
     log.warn(repofile)
     log.debug('Exiting create_repofile() didn\'t touch %s' % _dir )
