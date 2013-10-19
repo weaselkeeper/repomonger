@@ -16,6 +16,7 @@ import sys
 import shutil
 from ConfigParser import SafeConfigParser
 import logging
+import time
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
@@ -35,11 +36,32 @@ try:
     import yum
     # Import createrepo class, but for now, use a shell out
     import createrepo
+    from createrepo import MDError
+    from createrepo.utils import errorprint, _
+    import yum.misc
+    import time
+
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
                  yum rpm, and createrepo python modules.' , error)
     sys.exit(1)
 
+class MDCallBack(object):
+    """cli callback object for createrepo, stolen shamelessly from upstream"""
+    def errorlog(self, thing):
+        """error log output"""
+        print >> sys.stderr, thing
+
+    def log(self, thing):
+        """log output"""
+        print thing
+
+    def progress(self, item, current, total):
+        """progress bar"""
+        beg = "%*d/%d - " % (len(str(total)), current, total)
+        left = 80 - len(beg)
+        sys.stdout.write("\r%s%-*.*s" % (beg, left, left, item))
+        sys.stdout.flush()
 
 def get_options():
     """ command-line options """
@@ -109,7 +131,6 @@ def assemble_repo(pkglisting, _dir, linktype):
 
     except:
         msg = ('Can not create dir %s' % _dir)
-
     log.debug('in assemble_repo(), message is %s' % msg)
 
     if linktype == 'copy':
@@ -138,34 +159,38 @@ def assemble_repo(pkglisting, _dir, linktype):
     log.debug('Exiting assemble_repo(), trying to %s rpm pkgs, received message %s ' % (linktype, msg))
     return msg, success
 
-
-def create_repo_Shellout(_dir):
-    """ Run createrepo on _dir, assembling the bits yum needs"""
-    msg, success = 'starting to create repo', 1
-    log.debug('Entering create_repo_Shellout()')
-    import subprocess
-    try:
-        mkrepo = subprocess.Popen(['/usr/bin/createrepo', _dir],
-            stdout = subprocess.PIPE).communicate()[0]
-        success = 0
-    except:
-        log.warn('something went wrong with creating repo %s' % _dir)
-        msg, success = 'making repo failed', 1
-    log.debug('Exiting create_repo_Shellout with the msg %s ' % msg)
-    return msg, success
-
-def create_repo(_dir):
+def create_repo(clone_target, clone_dest):
     """ Run createrepo on _dir, assembling the bits yum needs"""
     msg, success = 'starting to create repo', 1
     log.debug('Entering create_repo()')
+
     try:
-        pass
-        #Do createrepo stuff, the pythonic way
+        """createrepo from cli main flow"""
+        start_st = time.time()
+        conf = createrepo.MetaDataConfig()
+        conf.basedir = clone_target
+        conf.directory = clone_dest
+        mid_st = time.time()
+        try:
+            mdgen = createrepo.SplitMetaDataGenerator(config_obj=conf,
+                                                          callback=MDCallBack())
+        except:
+            log.warn('something when wrong with mdgen creation')
+
+        try:
+            pm_st = time.time()
+            mdgen.doPkgMetadata()
+
+            rm_st = time.time()
+            mdgen.doRepoMetadata()
+
+            fm_st = time.time()
+            mdgen.doFinalMove()
+        except:
+            log.warn('something when wrong with mdgen usage')
+
     except:
-        log.warn('something went wrong with creating repo %s' % _dir)
-        msg, success = 'making repo failed', 1
-    log.debug('Exiting create_repo() with the msg %s ' % msg)
-    return msg, success
+        log.warn('something went wrong with creating repo %s' % clone_target)
 
 def create_repofile(reponame, _dir):
     """ Create a <name>.repo file to be used by yum on clients """
@@ -185,7 +210,8 @@ def run(_dir, source_repo, linktype='symlink'):
     # to assemble_repo to build the file structure.
     assemble_repo(pkgs, _dir, linktype)
     # And finaly, create the repo.
-    create_repo_Shellout(_dir)
+    create_repo(source_repo, _dir)
+    log.debug('source and dest %s %s ' % ( source_repo, _dir ))
     log.debug('Exiting run()')
 
 
