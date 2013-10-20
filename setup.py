@@ -7,7 +7,7 @@ from distutils.core import setup
 
 
 setup(name = "repomonger",
-    version = "0.1",
+    version = "0.2",
     description = "Simple yum repo clone/copy/assembler ",
     long_description = "clone/copy/assemble yum repos",
     author = "Jim Richardson",
