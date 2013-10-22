@@ -45,7 +45,7 @@ cp -r ./*.conf %{buildroot}%{_sysconfdir}/%{name}
 rm -rf %{buildroot}
 
 %changelog
-* Thu Aug 14 2013 Jim Richardson <weaselkeeper@gmail.com> - 0.2
+* Wed Aug 14 2013 Jim Richardson <weaselkeeper@gmail.com> - 0.2
 - Cleanup of build/spec
 
 * Sat Jul 27 2013 Jim Richardson <weaselkeeper@gmail.com> - 0.1
