@@ -1,5 +1,5 @@
 Name:           repomonger
-Version:        0.2
+Version:        %(git describe | sed -e 's/-/_/g')
 Release:        0
 Summary:        A few python scripts for yum repo clone/copy/assemble
 License:        GPLv2
