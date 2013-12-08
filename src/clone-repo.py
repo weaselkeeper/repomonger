@@ -79,10 +79,6 @@ def get_options():
                         action="store", dest="linktype",
                         default='symlink', help='symlink, hardlink, or copy')
 
-    parser.add_argument('-f', '--repofile', action='store_true', default=False,
-                        help='enable if you want a <reponame>.repo file for\
-                                use by yum clients')
-
     parser.add_argument('-n', '--dryrun', action="store_true",
                         default=False, help='Dry run will report what it \
                         would do, but makes no changes to the filesystem')
@@ -191,15 +187,6 @@ def create_repo(clone_target, clone_dest):
 
     except:
         log.warn('something went wrong with creating repo %s' % clone_target)
-
-def create_repofile(reponame, _dir):
-    """ Create a <name>.repo file to be used by yum on clients """
-    log.debug('Entering create_repofile()')
-    repofile = 'TODO'
-    log.warn('Repo file created for repo %s' % reponame)
-    log.warn(repofile)
-    log.debug('Exiting create_repofile() didn\'t touch %s' % _dir )
-    return repofile
 
 
 def run(_dir, source_repo, linktype='symlink'):
