@@ -13,6 +13,7 @@ import sys
 from ConfigParser import SafeConfigParser
 import logging
 PROJECTNAME = 'repomonger'
+
 try:
     from pymongo import Connection
 except ImportError as e:
@@ -64,11 +65,8 @@ def get_config(args,CONFIGFILE):
     return parser
 
 
-
-# Here we start if called directly (the usual case.)
-if __name__ == "__main__":
-    """This is where we will begin when called from CLI"""
-
+def get_args():
+    """ Parse the command line options """
 
     import argparse
 
@@ -89,9 +87,18 @@ if __name__ == "__main__":
     parser.add_argument('-R', '--repo', action='store', default=None,
         help='Name of repo to build. See definition in config')
 
-    args = parser.parse_args()
-    args.usage = "repomonger.py [options]"
+    _args = parser.parse_args()
+    _args.usage = PROJECTNAME +".py [options]"
 
+
+    return _args
+
+
+# Here we start if called directly (the usual case.)
+if __name__ == "__main__":
+    """This is where we will begin when called from CLI"""
+
+    args = get_args()
 
     if args.debug:
         log.setLevel(logging.DEBUG)
