@@ -16,8 +16,8 @@ PROJECTNAME = 'repomonger'
 
 try:
     from pymongo import Connection
-except ImportError as e:
-    print 'Failed import of pymmongo, system says %s' % e
+except ImportError as ERROR:
+    print 'Failed import of pymmongo, system says %s' % ERROR
     sys.exit(1)
 
 
@@ -25,7 +25,7 @@ except ImportError as e:
 CONFIGFILE = '/etc/repomonger/repomonger.conf'
 
 
-""" Setup logging """
+# Setup logging
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(levelname)s - %(message)s',
                     datefmt='%y.%m.%d %H:%M:%S')
@@ -38,23 +38,23 @@ log = logging.getLogger(PROJECTNAME)
 
 
 
-def run(args):
+def run(_args):
     """ placeholder, need to flesh this out"""
-    log.debug('in run(), running')
+    log.debug('in run(), running with args %s ' % _args)
 
 
-def get_config(args,CONFIGFILE):
-    # Now parse the config file.  Get any and all info from config file.
+def get_config(_args, _CONFIGFILE):
+    """  Now parse the config file.  Get any and all info from config file.""" 
     parser = SafeConfigParser()
     configuration = {}
-    if os.path.isfile(CONFIGFILE):
-        config = CONFIGFILE
+    if os.path.isfile(_CONFIGFILE):
+        config = _CONFIGFILE
     else:
-        log.warn('No config file found at %s' % CONFIGFILE)
+        log.warn('No config file found at %s' % _CONFIGFILE)
         sys.exit(1)
     try:
-        if args.repo:
-            repo = args.repo
+        if _args.repo:
+            repo = _args.repo
         else:
             repo = parser.get('Repomonger','repo')
     except:
@@ -94,9 +94,9 @@ def get_args():
     return _args
 
 
-# Here we start if called directly (the usual case.)
 if __name__ == "__main__":
-    """This is where we will begin when called from CLI"""
+    # Here we start if called directly (the usual case.)
+
 
     args = get_args()
 
@@ -107,6 +107,6 @@ if __name__ == "__main__":
     if args.config:
         CONFIGFILE = args.config
 
-    _parse_config = get_config(args,CONFIGFILE)
+    _parse_config = get_config(args, CONFIGFILE)
 
     run(args)
