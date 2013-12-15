@@ -9,7 +9,7 @@ lot more features than I need, and do a whole lot more than mere repo management
 
 The goals for repo-monger are as follows.
 
-Assemble yum repos based on simple key=value list of package name and location, 
+Assemble yum repos based on simple list of packages and location,
 using soft links to point to the files in question, without wasting space (and time)
 copying them around. Each repo is configured by a simple text file, that can 
 be machine generated from sources such as koji. Repo-monger will create the directory
