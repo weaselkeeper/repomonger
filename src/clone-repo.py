@@ -34,12 +34,10 @@ CONFIGFILE = '/etc/repomonger/repomonger.conf'
 try:
     import rpm
     import yum
-    # Import createrepo class, but for now, use a shell out
     import createrepo
     from createrepo import MDError
     from createrepo.utils import errorprint, _
     import yum.misc
-    import time
 
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
