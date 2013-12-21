@@ -46,7 +46,6 @@ def run(_args):
 def get_config(_args, _CONFIGFILE):
     """  Now parse the config file.  Get any and all info from config file.""" 
     parser = SafeConfigParser()
-    configuration = {}
     if os.path.isfile(_CONFIGFILE):
         config = _CONFIGFILE
     else:
