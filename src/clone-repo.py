@@ -61,6 +61,27 @@ class MDCallBack(object):
         sys.stdout.write("\r%s%-*.*s" % (beg, left, left, item))
         sys.stdout.flush()
 
+def get_config(_args, _CONFIGFILE):
+    """  Now parse the config file.  Get any and all info from config file."""
+    parser = SafeConfigParser()
+    if os.path.isfile(_CONFIGFILE):
+        config = _CONFIGFILE
+    else:
+        log.warn('No config file found at %s' % _CONFIGFILE)
+        sys.exit(1)
+    try:
+        if _args.repo:
+            repo = _args.repo
+        else:
+            repo = parser.get('Repomonger','repo')
+    except:
+        log.warn('config parse failed')
+        sys.exit(1)
+    log.warn('building repo %s' % repo)
+    parser.read(config)
+    return parser
+
+
 def get_options():
     """ command-line options """
     log.debug('Entering get_options()')
@@ -82,6 +103,9 @@ def get_options():
                         would do, but makes no changes to the filesystem')
 
     parser.add_argument('-d', '--debug', action="store_true", default=False)
+
+    parser.add_argument('-c','--config', action='store', help=("alternate \
+                        config location, default location %s"  % CONFIGFILE ))
 
     _args = parser.parse_args()
     _args.usage = "clone_repo.py [options]"
