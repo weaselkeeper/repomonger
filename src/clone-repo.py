@@ -79,6 +79,7 @@ def get_config(_args, _CONFIGFILE):
         sys.exit(1)
     log.warn('building repo %s' % repo)
     parser.read(config)
+    log.debug('parser reads %s' % parser)
     return parser
 
 
@@ -250,6 +251,7 @@ if "__main__" in __name__:
         sys.exit(1)
     else:
         destdir = args.destdir
+        log.debug('destination dir is %s' % destdir)
 
     if not args.linktype:
         link = 'symlink'
@@ -258,8 +260,8 @@ if "__main__" in __name__:
         if l_requested == 'hardlink' or 'symlink' or 'copy':
             link = l_requested
         else:
-            print 'Incorrect value for linktype, please use symlink, \
-            hardlink,or copy, not %s' % l_requested
+            log.warn('Incorrect value for linktype, please use symlink, \
+            hardlink,or copy, not %s' % l_requested )
             sys.exit(1)
 
     # and do the needful
