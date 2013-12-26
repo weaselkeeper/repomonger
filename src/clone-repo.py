@@ -105,7 +105,7 @@ def get_options():
 
     parser.add_argument('-d', '--debug', action="store_true", default=False)
 
-    parser.add_argument('-c','--config', action='store', help=("alternate \
+    parser.add_argument('-c', '--config', action='store', help=("alternate \
                         config location, default location %s"  % CONFIGFILE ))
 
     _args = parser.parse_args()
@@ -212,21 +212,22 @@ def create_repo(clone_target, clone_dest):
         log.warn('something went wrong with creating repo %s' % clone_target)
 
 
-def run(_dir, source_repo, linktype='symlink'):
+def run(_dir, _source_repo, linktype='symlink'):
+    """ begin the whole shooting match """
     log.debug('Entering run()')
     # Assemble the package list, with locations
-    pkgs = get_packagelist(source_repo)
+    pkgs = get_packagelist(_source_repo)
     # Send package list, along with _dir and linktype
     # to assemble_repo to build the file structure.
     assemble_repo(pkgs, _dir, linktype)
     # And finaly, create the repo.
-    create_repo(source_repo, _dir)
-    log.debug('source and dest %s %s ' % ( source_repo, _dir ))
+    create_repo(_source_repo, _dir)
+    log.debug('source and dest %s %s ' % ( _source_repo, _dir ))
     log.debug('Exiting run()')
 
 
 if "__main__" in __name__:
-    """This is where we will begin when called from CLI"""
+    # This is where we will begin when called from CLI
 
     import argparse
     args = get_options()
