@@ -127,6 +127,7 @@ def get_packagelist(src_repo):
             fdno = os.open(package, os.O_RDONLY)
             try:
                 # Ensuring this is an RPM pkg, not just some file with rpm ext.
+                # We don't actually use the variable except in this test
                 hdr = ts.hdrFromFdno(fdno)
             except rpm.error, e:
                 # Eating errors from signed packages where
