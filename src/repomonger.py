@@ -82,7 +82,7 @@ def run(_args, _config):
     if backend == 'flatfile':
         database = _config.get('backend', 'database')
     pkgs = get_packagelist(database, backend)
-    _dir = '/tmp/wibble'
+    _dir = _config.get('reponame', 'repo_dir')
     assemble_repo(pkgs, _dir, linktype='copy')
     # And finaly, create the repo.
     create_repo(pkgs, _dir)
