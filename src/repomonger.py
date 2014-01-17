@@ -152,7 +152,6 @@ def get_packagelist(database, backend):
     log.debug('Entering get_packagelist()')
     # For now, we are dealing only with flatfile database.
     # append each pkg listed in database to pkglisting, with fq filename
-    print database
     pkglisting = [line.rstrip('\n') for line in open(database)]
     log.debug(pkglisting)
     log.debug('Exiting get_packagelist')
