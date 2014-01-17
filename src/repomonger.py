@@ -31,6 +31,27 @@ except ImportError as error:
 
 PROJECTNAME = 'repomonger'
 
+
+class MDCallBack(object):
+    """cli callback object for createrepo, stolen shamelessly from upstream"""
+    def errorlog(self, thing):
+        """error log output"""
+        print >> sys.stderr, thing
+
+    def log(self, thing):
+        """log output"""
+        print thing
+
+    def progress(self, item, current, total):
+        """progress bar"""
+        beg = "%*d/%d - " % (len(str(total)), current, total)
+        left = 80 - len(beg)
+        sys.stdout.write("\r%s%-*.*s" % (beg, left, left, item))
+        sys.stdout.flush()
+
+
+
+
 #try:
 #    from pymongo import Connection
 #except ImportError as ERROR:
