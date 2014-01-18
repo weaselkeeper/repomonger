@@ -30,11 +30,29 @@ try:
 
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
-                 yum rpm, and createrepo python modules.' , error)
+yum rpm, and createrepo python modules.' , error)
     sys.exit(1)
 
+try:
+    from pymongo import Connection
+except ImportError as error:
+    print 'Failed import of pymmongo, system says %s' % error
+    sys.exit(1)
 
+# Setup some basic default stuff
+CONFIGFILE = '/etc/repomonger/repomonger.conf'
 PROJECTNAME = 'repomonger'
+
+# Setup logging
+logging.basicConfig(level=logging.WARN,
+                    format='%(asctime)s %(levelname)s - %(message)s',
+                    datefmt='%y.%m.%d %H:%M:%S')
+
+# Setup logging to console.
+console = logging.StreamHandler(sys.stderr)
+console.setLevel(logging.WARN)
+logging.getLogger(PROJECTNAME).addHandler(console)
+log = logging.getLogger(PROJECTNAME)
 
 
 class MDCallBack(object):
@@ -55,31 +73,6 @@ class MDCallBack(object):
         left = 80 - len(beg)
         sys.stdout.write("\r%s%-*.*s" % (beg, left, left, item))
         sys.stdout.flush()
-
-
-
-
-#try:
-#    from pymongo import Connection
-#except ImportError as ERROR:
-#    print 'Failed import of pymmongo, system says %s' % ERROR
-#    sys.exit(1)
-
-
-# Setup some basic default stuff
-CONFIGFILE = '/etc/repomonger/repomonger.conf'
-
-
-# Setup logging
-logging.basicConfig(level=logging.WARN,
-                    format='%(asctime)s %(levelname)s - %(message)s',
-                    datefmt='%y.%m.%d %H:%M:%S')
-
-# Setup logging to console.
-console = logging.StreamHandler(sys.stderr)
-console.setLevel(logging.WARN)
-logging.getLogger(PROJECTNAME).addHandler(console)
-log = logging.getLogger(PROJECTNAME)
 
 
 def run(_args, _config):
@@ -119,16 +112,15 @@ def assemble_repo(pkglisting, _dir, linktype):
 
 def create_repo(clone_target, clone_dest):
     """ Run createrepo on _dir, assembling the bits yum needs"""
-    msg, success = 'starting to create repo', 1
     log.debug('Entering create_repo()')
 
     try:
-        """createrepo from cli main flow"""
-        start_st = time.time()
+        # createrepo from cli main flow
+        #start_st = time.time()
         conf = createrepo.MetaDataConfig()
         conf.basedir = clone_target
         conf.directory = clone_dest
-        mid_st = time.time()
+        #mid_st = time.time()
         try:
             mdgen = createrepo.SplitMetaDataGenerator(config_obj=conf,
                                                           callback=MDCallBack())
@@ -136,13 +128,13 @@ def create_repo(clone_target, clone_dest):
             log.warn('something when wrong with mdgen creation')
 
         try:
-            pm_st = time.time()
+            #pm_st = time.time()
             mdgen.doPkgMetadata()
 
-            rm_st = time.time()
+            #rm_st = time.time()
             mdgen.doRepoMetadata()
 
-            fm_st = time.time()
+            #fm_st = time.time()
             mdgen.doFinalMove()
         except:
             log.warn('something when wrong with mdgen usage')
@@ -153,7 +145,7 @@ def create_repo(clone_target, clone_dest):
 
 
 
-def get_packagelist(database, backend):
+def get_packagelist(database, backend='flatfile'):
     """ Build a dict of the files that are going to be linked or copied
         packagename = fq_Filename"""
     log.debug('Entering get_packagelist()')
