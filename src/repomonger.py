@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 # vim: set expandtab:
+""" Repomonger is a simple repo clone/build script.  You can clone an existing
+repo in a new location, using copies, hardlinks, or symlinks.  Or you can
+create a new repo from a list of file locations, again, either copying, or
+linking to the specified files.
 
-"""
 
 License: GPL V2 See LICENSE file
 Author: Jim Richardson
 email: weaselkeeper@gmail.com
+Date:   18 Jul 2013
+
 
 """
 import os
@@ -33,16 +38,18 @@ PROJECTNAME = 'repomonger'
 
 
 class MDCallBack(object):
-    """cli callback object for createrepo, stolen shamelessly from upstream"""
-    def errorlog(self, thing):
+    """cli callback object for createrepo, stolen shamelessly from upstream
+    Didn't need the rest of it"""
+    @classmethod
+    def errorlog(cls, thing):
         """error log output"""
         print >> sys.stderr, thing
-
-    def log(self, thing):
+    @classmethod
+    def log(cls, thing):
         """log output"""
         print thing
-
-    def progress(self, item, current, total):
+    @classmethod
+    def progress(cls, item, current, total):
         """progress bar"""
         beg = "%*d/%d - " % (len(str(total)), current, total)
         left = 80 - len(beg)
