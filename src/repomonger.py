@@ -75,6 +75,18 @@ class MDCallBack(object):
         sys.stdout.flush()
 
 
+def get_config(_args, _CONFIGFILE):
+    """  Now parse the config file.  Get any and all info from config file."""
+    parser = SafeConfigParser()
+    if os.path.isfile(_CONFIGFILE):
+        config = _CONFIGFILE
+    else:
+        log.warn('No config file found at %s' % _CONFIGFILE)
+        sys.exit(1)
+    parser.read(config)
+    return parser
+
+
 def run(_args, _config):
     """ Beginning the run """
     log.debug('in run(), running with args %s ' % _args)
@@ -83,16 +95,16 @@ def run(_args, _config):
         database = _config.get('backend', 'database')
     pkgs = get_packagelist(database, backend)
     _dir = _config.get('reponame', 'repo_dir')
-    assemble_repo(pkgs, _dir, linktype='copy')
+    assemble_pkgs(pkgs, _dir, linktype='copy')
     # And finaly, create the repo.
     create_repo(pkgs, _dir)
     log.debug('dest %s ' %  _dir )
     log.debug('Exiting run()')
 
 
-def assemble_repo(pkglisting, _dir, linktype):
+def assemble_pkgs(pkglisting, _dir, linktype):
     """ copy or link files to cloned location. """
-    log.debug('Entering assemble_repo()')
+    log.debug('Entering assemble_pkgs()')
     msg, success = 'Beginning to assemble repo', 1
     try:
         if not os.path.exists(_dir):
@@ -101,7 +113,7 @@ def assemble_repo(pkglisting, _dir, linktype):
             msg = ('%s created' % _dir)
     except:
         msg = ('Can not create dir %s' % _dir)
-    log.debug('in assemble_repo(), message is %s' % msg)
+    log.debug('in assemble_pkgs(), message is %s' % msg)
 
     if linktype == 'copy':
         for pkg in pkglisting:
@@ -155,18 +167,6 @@ def get_packagelist(database, backend='flatfile'):
     log.debug(pkglisting)
     log.debug('Exiting get_packagelist')
     return pkglisting
-
-
-def get_config(_args, _CONFIGFILE):
-    """  Now parse the config file.  Get any and all info from config file."""
-    parser = SafeConfigParser()
-    if os.path.isfile(_CONFIGFILE):
-        config = _CONFIGFILE
-    else:
-        log.warn('No config file found at %s' % _CONFIGFILE)
-        sys.exit(1)
-    parser.read(config)
-    return parser
 
 
 def get_args():
