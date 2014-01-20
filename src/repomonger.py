@@ -187,12 +187,12 @@ def get_args():
         help='Specify a path to an alternate config file')
     parser.add_argument('-R', '--repo', action='store', default=None,
         help='Name of repo to build. See definition in config')
-    parser.add_argument('-S', '--src', action="store",
-                        dest="source_repo", help='Repo to clone.')
-    parser.add_argument('-D', '--dst', action="store", default='./'
-                        dest="destdir", help='Topdir of cloned repo')
-    parser.add_argument("-l", "--linktype",
-                        action="store", dest="linktype",
+    parser.add_argument('-S', '--src', action='store',
+                        dest='source_repo', help='Repo to clone.')
+    parser.add_argument('-D', '--dst', action='store', default='./',
+                       dest="destdir", help='Topdir of cloned repo')
+    parser.add_argument('-l', '--linktype',
+                        action='store', dest='linktype',
                         default='symlink', help='symlink, hardlink, or copy')
 
     _args = parser.parse_args()
