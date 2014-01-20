@@ -105,8 +105,8 @@ def get_options():
 
     parser.add_argument('-d', '--debug', action="store_true", default=False)
 
-    parser.add_argument('-c', '--config', action='store', help=("alternate \
-                        config location, default location %s"  % CONFIGFILE ))
+    parser.add_argument('-c', '--config', action='store', help=("alternate\
+                        config location, default location %s" % CONFIGFILE))
 
     _args = parser.parse_args()
     _args.usage = "clone_repo.py [options]"
