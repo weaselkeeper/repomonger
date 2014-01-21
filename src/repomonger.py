@@ -108,10 +108,12 @@ def assemble_pkgs(pkglisting, _dir, linktype):
     msg, success = 'Beginning to assemble repo', 1
     try:
         if not os.path.exists(_dir):
-            log.warn('destdir %s does not exist, creating it' % _dir)
+            log.warn('_dir %s does not exist, creating it' % _dir)
             os.makedirs(_dir)
             msg = ('%s created' % _dir)
-    except:
+
+    except OSError, e:
+        log.warn(str(e))
         msg = ('Can not create dir %s' % _dir)
     log.debug('in assemble_pkgs(), message is %s' % msg)
 
@@ -119,8 +121,28 @@ def assemble_pkgs(pkglisting, _dir, linktype):
         for pkg in pkglisting:
             shutil.copy(pkg, _dir)
         msg, success = 'pkgs copied', 0
-    # Now create the repo
+
+    elif linktype == 'hardlink':
+        for pkg in pkglisting:
+            _path, _file = os.path.split(pkg)
+            linkedfile = _dir + '/' + _file
+            os.link(pkg, linkedfile)
+        msg, success = 'pkgs hardinked', 0
+
+    elif linktype == 'symlink':
+        for pkg in pkglisting:
+            _path, _file = os.path.split(pkg)
+            linkedfile = _dir + '/' + _file
+            try:
+
+                os.symlink(pkg, linkedfile)
+            except OSError, e:
+                log.warn(str(e))
+                break
+        msg, success = 'pkgs symlinked', 0
+    log.debug('Exiting assemble_pkgs(), trying to %s rpm pkgs, received message %s ' % (linktype, msg))
     return msg, success
+
 
 def create_repo(clone_target, clone_dest):
     """ Run createrepo on _dir, assembling the bits yum needs"""
