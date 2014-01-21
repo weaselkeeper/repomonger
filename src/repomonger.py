@@ -89,12 +89,17 @@ def get_config(_args, _CONFIGFILE):
 
 def run(_args, _config):
     """ Beginning the run """
-    log.debug('in run(), running with args %s ' % _args)
-    backend = _config.get('backend', 'db_type')
-    if backend == 'flatfile':
-        database = _config.get('backend', 'database')
-    pkgs = get_packagelist(database, backend)
-    _dir = _config.get('reponame', 'repo_dir')
+    # Are we cloning, or creating anew?
+    if _args.clone:
+        log.debug('in run(), cloning repo with args %s ' % _args)
+        backend = _config.get('backend', 'db_type')
+        if backend == 'flatfile':
+            database = _config.get('backend', 'database')
+        pkgs = get_packagelist(database, backend)
+        _dir = _config.get('reponame', 'repo_dir')
+    else:
+        log.debug('in run(), creating new repo with args %s:' % _args)
+
     assemble_pkgs(pkgs, _dir, linktype='copy')
     # And finaly, create the repo.
     create_repo(pkgs, _dir)
@@ -204,6 +209,8 @@ def get_args():
     parser.add_argument('-d', '--debug', dest='debug',
         action='store_true', help='Enable debugging during execution.',
         default=None)
+    parser.add_argument('-C', '--clone', action='store_true',
+        help='clone existing repo rather than create from a list of pkgs')
     parser.add_argument('-c', '--config',
         action='store', default=None,
         help='Specify a path to an alternate config file')
