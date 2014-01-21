@@ -89,17 +89,18 @@ def get_config(_args, _CONFIGFILE):
 
 def run(_args, _config):
     """ Beginning the run """
+    backend = _config.get('backend', 'db_type')
+    if backend == 'flatfile':
+        database = _config.get('backend', 'database')
     # Are we cloning, or creating anew?
     if _args.clone:
         log.debug('in run(), cloning repo with args %s ' % _args)
-        backend = _config.get('backend', 'db_type')
-        if backend == 'flatfile':
-            database = _config.get('backend', 'database')
         pkgs = get_clonepackagelist(_args.source_repo)
         _dir = _args.destdir
     else:
         log.debug('in run(), creating new repo with args %s:' % _args)
-
+        _dir = _config.get('reponame', 'repo_dir')
+        pkgs = get_packagelist(database, backend)
     assemble_pkgs(pkgs, _dir, linktype='copy')
     # And finaly, create the repo.
     create_repo(pkgs, _dir)
