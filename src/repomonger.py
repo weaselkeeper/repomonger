@@ -95,8 +95,8 @@ def run(_args, _config):
         backend = _config.get('backend', 'db_type')
         if backend == 'flatfile':
             database = _config.get('backend', 'database')
-        pkgs = get_packagelist(database, backend)
-        _dir = _config.get('reponame', 'repo_dir')
+        pkgs = get_clonepackagelist(_args.source_repo)
+        _dir = _args.destdir
     else:
         log.debug('in run(), creating new repo with args %s:' % _args)
 
@@ -182,12 +182,38 @@ def create_repo(clone_target, clone_dest):
         log.warn('something went wrong with creating repo %s' % clone_target)
 
 
+def get_clonepackagelist(src_repo):
+    """ Build a list of the files that are going to be linked or copied
+        packagename = fq_Filename"""
+    log.debug('Entering get_packagelist()')
+    pkglisting = []
+    pkgs = os.listdir(src_repo)
+    for rpm_pkg in pkgs:
+        if rpm_pkg.endswith('.rpm'):
+            ts = rpm.TransactionSet()
+            package = src_repo + '/' + rpm_pkg
+            fdno = os.open(package, os.O_RDONLY)
+            try:
+                # Ensuring this is an RPM pkg, not just some file with rpm ext.
+                # We don't actually use the variable except in this test
+                hdr = ts.hdrFromFdno(fdno)
+            except rpm.error, e:
+                # Eating errors from signed packages where
+                # we don't have the key
+                log.warn(package + " " + str(e))
+            pkglisting.append(package)
+            os.close(fdno)
+    log.debug('Exiting get_packagelist')
+    return pkglisting
 
 
 def get_packagelist(database, backend='flatfile'):
     """ Build a dict of the files that are going to be linked or copied
         packagename = fq_Filename"""
     log.debug('Entering get_packagelist()')
+    if backend == 'clone':
+        # get listing from _args.source_repo
+        pkglisting = get_packagelist(_args.source_repo)
     # For now, we are dealing only with flatfile database.
     # append each pkg listed in database to pkglisting, with fq filename
     pkglisting = [line.rstrip('\n') for line in open(database)]
@@ -245,5 +271,4 @@ if __name__ == "__main__":
         CONFIGFILE = args.config
 
     _parse_config = get_config(args, CONFIGFILE)
-
     run(args,_parse_config)
