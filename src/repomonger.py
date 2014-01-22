@@ -91,20 +91,24 @@ def run(_args, _config):
     """ Beginning the run """
     backend = _config.get('backend', 'db_type')
     if backend == 'flatfile':
-        database = _config.get('backend', 'database')
+        database = _config.get('backend', 'filelist')
+    # destdir arg overrides config
+    if _args.destdir:
+        dest_dir = _args.destdir
+        log.debug('putting repo in %s' % dest_dir)
+    else:
+        dest_dir = _config.get('reponame', 'dest_dir')
     # Are we cloning, or creating anew?
     if _args.clone:
         log.debug('in run(), cloning repo with args %s ' % _args)
         pkgs = get_clonepackagelist(_args.source_repo)
-        _dir = _args.destdir
     else:
         log.debug('in run(), creating new repo with args %s:' % _args)
-        _dir = _config.get('reponame', 'repo_dir')
         pkgs = get_packagelist(database, backend)
-    assemble_pkgs(pkgs, _dir, linktype='copy')
+    assemble_pkgs(pkgs, dest_dir, linktype='copy')
     # And finaly, create the repo.
-    create_repo(pkgs, _dir)
-    log.debug('dest %s ' %  _dir )
+    create_repo(pkgs, dest_dir)
+    log.debug('dest %s ' %  dest_dir )
     log.debug('Exiting run()')
 
 
@@ -245,7 +249,7 @@ def get_args():
         help='Name of repo to build. See definition in config')
     parser.add_argument('-S', '--src', action='store',
                         dest='source_repo', help='Repo to clone.')
-    parser.add_argument('-D', '--dst', action='store', default='./',
+    parser.add_argument('-D', '--dst', action='store', 
                        dest="destdir", help='Topdir of cloned repo')
     parser.add_argument('-l', '--linktype',
                         action='store', dest='linktype',
