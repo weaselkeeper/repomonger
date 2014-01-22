@@ -92,6 +92,10 @@ def run(_args, _config):
     backend = _config.get('backend', 'db_type')
     if backend == 'flatfile':
         database = _config.get('backend', 'filelist')
+    if _args.linktype:
+        linktype = _args.linktype
+    else:
+        linktype = 'copy'
     # destdir arg overrides config
     if _args.destdir:
         dest_dir = _args.destdir
@@ -105,7 +109,7 @@ def run(_args, _config):
     else:
         log.debug('in run(), creating new repo with args %s:' % _args)
         pkgs = get_packagelist(database, backend)
-    assemble_pkgs(pkgs, dest_dir, linktype='copy')
+    assemble_pkgs(pkgs, dest_dir, linktype)
     # And finaly, create the repo.
     create_repo(pkgs, dest_dir)
     log.debug('dest %s ' %  dest_dir )
