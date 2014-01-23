@@ -135,6 +135,7 @@ def assemble_pkgs(pkglisting, _dir, linktype):
         for pkg in pkglisting:
             shutil.copy(pkg, _dir)
         msg, success = 'pkgs copied', 0
+        log.debug(msg, success)
 
     elif linktype == 'hardlink':
         for pkg in pkglisting:
@@ -142,6 +143,7 @@ def assemble_pkgs(pkglisting, _dir, linktype):
             linkedfile = _dir + '/' + _file
             os.link(pkg, linkedfile)
         msg, success = 'pkgs hardinked', 0
+        log.debug(msg, success)
 
     elif linktype == 'symlink':
         for pkg in pkglisting:
@@ -154,6 +156,7 @@ def assemble_pkgs(pkglisting, _dir, linktype):
                 log.warn(str(e))
                 break
         msg, success = 'pkgs symlinked', 0
+        log.debug(msg, success)
     log.debug('Exiting assemble_pkgs(), trying to %s rpm pkgs, received message %s ' % (linktype, msg))
     return msg, success
 
