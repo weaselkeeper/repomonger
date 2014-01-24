@@ -18,7 +18,6 @@ import sys
 from ConfigParser import SafeConfigParser
 import logging
 import shutil
-import time
 
 try:
     import rpm
@@ -30,7 +29,7 @@ try:
 
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
-yum rpm, and createrepo python modules.' , error)
+yum rpm, and createrepo python modules.', error)
     sys.exit(1)
 
 try:
@@ -62,10 +61,12 @@ class MDCallBack(object):
     def errorlog(cls, thing):
         """error log output"""
         print >> sys.stderr, thing
+
     @classmethod
     def log(cls, thing):
         """log output"""
         print thing
+
     @classmethod
     def progress(cls, item, current, total):
         """progress bar"""
@@ -75,7 +76,7 @@ class MDCallBack(object):
         sys.stdout.flush()
 
 
-def get_config(_args, _CONFIGFILE):
+def get_config(_CONFIGFILE):
     """  Now parse the config file.  Get any and all info from config file."""
     parser = SafeConfigParser()
     if os.path.isfile(_CONFIGFILE):
@@ -112,7 +113,7 @@ def run(_args, _config):
     assemble_pkgs(pkgs, dest_dir, linktype)
     # And finaly, create the repo.
     create_repo(pkgs, dest_dir)
-    log.debug('dest %s ' %  dest_dir )
+    log.debug('dest %s ' % dest_dir)
     log.debug('Exiting run()')
 
 
@@ -157,7 +158,8 @@ def assemble_pkgs(pkglisting, _dir, linktype):
                 break
         msg, success = 'pkgs symlinked', 0
         log.debug(msg, success)
-    log.debug('Exiting assemble_pkgs(), trying to %s rpm pkgs, received message %s ' % (linktype, msg))
+    log.debug('Exiting assemble_pkgs(), trying to %s pkgs, got error %s '
+              % (linktype, msg))
     return msg, success
 
 
@@ -225,7 +227,7 @@ def get_packagelist(database, backend='flatfile'):
     log.debug('Entering get_packagelist()')
     if backend == 'clone':
         # get listing from _args.source_repo
-        pkglisting = get_packagelist(_args.source_repo)
+        pkglisting = get_packagelist(args.source_repo)
     # For now, we are dealing only with flatfile database.
     # append each pkg listed in database to pkglisting, with fq filename
     pkglisting = [line.rstrip('\n') for line in open(database)]
@@ -256,22 +258,20 @@ def get_args():
         help='Name of repo to build. See definition in config')
     parser.add_argument('-S', '--src', action='store',
                         dest='source_repo', help='Repo to clone.')
-    parser.add_argument('-D', '--dst', action='store', 
-                       dest="destdir", help='Topdir of cloned repo')
+    parser.add_argument('-D', '--dst', action='store',
+                        dest="destdir", help='Topdir of cloned repo')
     parser.add_argument('-l', '--linktype',
                         action='store', dest='linktype',
                         default='symlink', help='symlink, hardlink, or copy')
 
     _args = parser.parse_args()
-    _args.usage = PROJECTNAME +".py [options]"
-
+    _args.usage = PROJECTNAME + ".py [options]"
 
     return _args
 
 
 if __name__ == "__main__":
     # Here we start if called directly (the usual case.)
-
 
     args = get_args()
 
@@ -282,5 +282,5 @@ if __name__ == "__main__":
     if args.config:
         CONFIGFILE = args.config
 
-    _parse_config = get_config(args, CONFIGFILE)
-    run(args,_parse_config)
+    _parse_config = get_config(CONFIGFILE)
+    run(args, _parse_config)
