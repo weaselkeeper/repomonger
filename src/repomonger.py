@@ -82,7 +82,7 @@ def get_config(_CONFIGFILE):
     if os.path.isfile(_CONFIGFILE):
         config = _CONFIGFILE
     else:
-        log.warn('No config file found at %s' % _CONFIGFILE)
+        log.warn('No config file found at %s', _CONFIGFILE)
         sys.exit(1)
     parser.read(config)
     return parser
@@ -100,15 +100,15 @@ def run(_args, _config):
     # destdir arg overrides config
     if _args.destdir:
         dest_dir = _args.destdir
-        log.debug('putting repo in %s' % dest_dir)
+        log.debug('putting repo in %s', dest_dir)
     else:
         dest_dir = _config.get('reponame', 'dest_dir')
     # Are we cloning, or creating anew?
     if _args.clone:
-        log.debug('in run(), cloning repo with args %s ' % _args)
+        log.debug('in run(), cloning repo with args %s ', _args)
         pkgs = get_clonepackagelist(_args.source_repo)
     else:
-        log.debug('in run(), creating new repo with args %s:' % _args)
+        log.debug('in run(), creating new repo with args %s:', _args)
         pkgs = get_packagelist(database, backend)
     assemble_pkgs(pkgs, dest_dir, linktype)
     # And finaly, create the repo.
@@ -123,14 +123,14 @@ def assemble_pkgs(pkglisting, _dir, linktype):
     msg, success = 'Beginning to assemble repo', 1
     try:
         if not os.path.exists(_dir):
-            log.warn('_dir %s does not exist, creating it' % _dir)
+            log.warn('_dir %s does not exist, creating it', _dir)
             os.makedirs(_dir)
             msg = ('%s created' % _dir)
 
     except OSError, e:
         log.warn(str(e))
         msg = ('Can not create dir %s' % _dir)
-    log.debug('in assemble_pkgs(), message is %s' % msg)
+    log.debug('in assemble_pkgs(), message is %s', msg)
 
     if linktype == 'copy':
         for pkg in pkglisting:
@@ -158,8 +158,8 @@ def assemble_pkgs(pkglisting, _dir, linktype):
                 break
         msg, success = 'pkgs symlinked', 0
         log.debug(msg, success)
-    log.debug('Exiting assemble_pkgs(), trying to %s pkgs, got error %s '
-              % (linktype, msg))
+    log.debug('Exiting assemble_pkgs(), trying to %s pkgs, got error %s ',
+              linktype, msg)
     return msg, success
 
 
@@ -193,7 +193,7 @@ def create_repo(clone_target, clone_dest):
             log.warn('something when wrong with mdgen usage')
 
     except:
-        log.warn('something went wrong with creating repo %s' % clone_target)
+        log.warn('something went wrong with creating repo %s', clone_target)
 
 
 def get_clonepackagelist(src_repo):
