@@ -91,13 +91,13 @@ def get_config(_CONFIGFILE):
 
 def run(_args, _config):
     """ Beginning the run """
-    n
     backend = _config.get('backend', 'db_type')
     if backend == 'flatfile':
         database = _config.get('backend', 'filelist')
     else:
         col = mongo_connection(_config)
-        print col
+        # pull list from col
+        database = col
     if _args.linktype:
         linktype = _args.linktype
     else:
@@ -277,16 +277,17 @@ def get_args():
 
 def mongo_connection(_config):
     _host = _config.get('backend', 'db_host')
-    _database = _config.get('backend', 'databse')
+    _database = _config.get('backend', 'database')
     _collection = _config.get('backend', 'collection')
     try:
         log.debug('connecting to host %s for collection %s', _host,
                 _collection)
         con = Connection(_host)
         col = con[_database][_collection]
-    except:
-        print 'wonder what went wrong?'
-    return col
+        print col
+    except  Exception as e:
+        log.warn('Error, python reports %s', e)
+        sys.exit(1)
 
 if __name__ == "__main__":
     # Here we start if called directly (the usual case.)
