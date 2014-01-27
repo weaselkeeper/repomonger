@@ -34,6 +34,7 @@ yum rpm, and createrepo python modules.', error)
 
 try:
     from pymongo import Connection
+
 except ImportError as error:
     print 'Failed import of pymmongo, system says %s' % error
     sys.exit(1)
@@ -90,9 +91,13 @@ def get_config(_CONFIGFILE):
 
 def run(_args, _config):
     """ Beginning the run """
+    n
     backend = _config.get('backend', 'db_type')
     if backend == 'flatfile':
         database = _config.get('backend', 'filelist')
+    else:
+        col = mongo_connection(_config)
+        print col
     if _args.linktype:
         linktype = _args.linktype
     else:
@@ -269,6 +274,19 @@ def get_args():
 
     return _args
 
+
+def mongo_connection(_config):
+    _host = _config.get('backend', 'db_host')
+    _database = _config.get('backend', 'databse')
+    _collection = _config.get('backend', 'collection')
+    try:
+        log.debug('connecting to host %s for collection %s', _host,
+                _collection)
+        con = Connection(_host)
+        col = con[_database][_collection]
+    except:
+        print 'wonder what went wrong?'
+    return col
 
 if __name__ == "__main__":
     # Here we start if called directly (the usual case.)
