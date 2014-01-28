@@ -21,11 +21,7 @@ import shutil
 
 try:
     import rpm
-    import yum
     import createrepo
-    from createrepo import MDError
-    from createrepo.utils import errorprint, _
-    import yum.misc
 
 except ImportError as error:
     logging.warn('Python says %s, please ensure you have access to the \
