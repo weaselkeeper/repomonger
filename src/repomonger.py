@@ -19,22 +19,6 @@ from ConfigParser import SafeConfigParser
 import logging
 import shutil
 
-try:
-    import rpm
-    import createrepo
-
-except ImportError as error:
-    logging.warn('Python says %s, please ensure you have access to the \
-yum rpm, and createrepo python modules.', error)
-    sys.exit(1)
-
-try:
-    from pymongo import Connection
-
-except ImportError as error:
-    print 'Failed import of pymmongo, system says %s' % error
-
-
 # Setup some basic default stuff
 CONFIGFILE = '/etc/repomonger/repomonger.conf'
 PROJECTNAME = 'repomonger'
@@ -49,6 +33,23 @@ console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
 logging.getLogger(PROJECTNAME).addHandler(console)
 log = logging.getLogger(PROJECTNAME)
+
+
+try:
+    import rpm
+    import createrepo
+
+except ImportError as error:
+    logging.warn('Python says %s, please ensure you have access to the \
+yum rpm, and createrepo python modules.', error)
+    sys.exit(1)
+
+try:
+    from pymongo import Connection
+
+except ImportError as error:
+    log.warn('Failed import of pymmongo, system says %s', error)
+
 
 
 class MDCallBack(object):
