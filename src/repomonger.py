@@ -114,7 +114,7 @@ def run(_args, _config):
     assemble_pkgs(pkgs, dest_dir, linktype)
     # And finaly, create the repo.
     create_repo(pkgs, dest_dir)
-    log.debug('dest %s ' % dest_dir)
+    log.debug('dest %s ', dest_dir)
     log.debug('Exiting run()')
 
 
@@ -272,6 +272,7 @@ def get_args():
 
 
 def mongo_connection(_config):
+    """ Connect to mongo backend """
     _host = _config.get('backend', 'db_host')
     _database = _config.get('backend', 'database')
     _collection = _config.get('backend', 'collection')
@@ -280,7 +281,7 @@ def mongo_connection(_config):
                 _collection)
         con = Connection(_host)
         col = con[_database][_collection]
-        print col
+        return col
     except  Exception as e:
         log.warn('Error, python reports %s', e)
         sys.exit(1)
