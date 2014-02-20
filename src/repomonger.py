@@ -33,7 +33,7 @@ try:
 
 except ImportError as error:
     print 'Failed import of pymmongo, system says %s' % error
-    sys.exit(1)
+
 
 # Setup some basic default stuff
 CONFIGFILE = '/etc/repomonger/repomonger.conf'
