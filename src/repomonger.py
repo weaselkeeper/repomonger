@@ -86,7 +86,7 @@ def get_config(_CONFIGFILE):
     return parser
 
 
-def koji_packagelist(_args):
+def koji_packagelist():
     """ for now, just get a list of the packages for a given tag """
     log.debug('in koji_packagelist')
     try:
@@ -96,8 +96,8 @@ def koji_packagelist(_args):
         sys.exit(1)
 
     packages = []
-    tag = 'production' # setting tag to prod for now, while developing
-    kojiserver = _args.kojiserver
+    tag = args.kojitag
+    kojiserver = args.kojiserver
     log.debug('Opening client session to %s', kojiserver)
     kojiclient = koji.ClientSession(kojiserver, {})
     pkglist = kojiclient.getLatestBuilds(tag)
@@ -111,7 +111,9 @@ def run(_args, _config):
 
     # working on koji stuff
     if args.kojiserver:
-        kojipkgs = koji_packagelist(args)
+        kojipkgs = koji_packagelist()
+        for pkg in kojipkgs:
+            print pkg
         sys.exit(0)
 
     backend = _config.get('backend', 'db_type')
@@ -293,6 +295,8 @@ def get_args():
                         default='symlink', help='symlink, hardlink, or copy')
     parser.add_argument('-k', '--koji', action='store',
                         dest="kojiserver", help='koji server to get info from')
+    parser.add_argument('-t', '--tag', action='store',
+                        dest="kojitag", help='koji tag to get info for')
 
 
     _args = parser.parse_args()
@@ -320,12 +324,6 @@ if __name__ == "__main__":
     # Here we start if called directly (the usual case.)
 
     args = get_args()
-
-    if args.kojiserver:
-        kojipkgs = koji_packagelist(args)
-        for pkg in kojipkgs:
-            print pkg
-        sys.exit(0)
 
     if args.debug:
         log.setLevel(logging.DEBUG)
