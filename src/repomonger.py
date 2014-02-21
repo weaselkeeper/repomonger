@@ -88,6 +88,7 @@ def get_config(_CONFIGFILE):
 
 def koji_packagelist(_args):
     """ for now, just get a list of the packages for a given tag """
+    log.debug('in koji_packagelist')
     try:
         import koji
     except ImportError:
@@ -97,6 +98,7 @@ def koji_packagelist(_args):
     packages = []
     tag = 'production' # setting tag to prod for now, while developing
     kojiserver = _args.kojiserver
+    log.debug('Opening client session to %s', kojiserver)
     kojiclient = koji.ClientSession(kojiserver, {})
     pkglist = kojiclient.getLatestBuilds(tag)
     for pkg in pkglist:
@@ -106,6 +108,12 @@ def koji_packagelist(_args):
 
 def run(_args, _config):
     """ Beginning the run """
+
+    # working on koji stuff
+    if args.kojiserver:
+        kojipkgs = koji_packagelist(args)
+        sys.exit(0)
+
     backend = _config.get('backend', 'db_type')
     if backend == 'flatfile':
         database = _config.get('backend', 'filelist')
@@ -315,7 +323,8 @@ if __name__ == "__main__":
 
     if args.kojiserver:
         kojipkgs = koji_packagelist(args)
-        print kojipkgs
+        for pkg in kojipkgs:
+            print pkg
         sys.exit(0)
 
     if args.debug:
@@ -326,4 +335,5 @@ if __name__ == "__main__":
         CONFIGFILE = args.config
 
     _parse_config = get_config(CONFIGFILE)
+
     run(args, _parse_config)
