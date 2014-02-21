@@ -19,6 +19,7 @@ from ConfigParser import SafeConfigParser
 import logging
 import shutil
 
+
 # Setup some basic default stuff
 CONFIGFILE = '/etc/repomonger/repomonger.conf'
 PROJECTNAME = 'repomonger'
@@ -33,7 +34,6 @@ console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
 logging.getLogger(PROJECTNAME).addHandler(console)
 log = logging.getLogger(PROJECTNAME)
-
 
 try:
     import rpm
@@ -86,6 +86,24 @@ def get_config(_CONFIGFILE):
     return parser
 
 
+def koji_packagelist(_args):
+    """ for now, just get a list of the packages for a given tag """
+    try:
+        import koji
+    except ImportError:
+        log.warn('koji module not available')
+        sys.exit(1)
+
+    packages = []
+    tag = 'production' # setting tag to prod for now, while developing
+    kojiserver = _args.kojiserver
+    kojiclient = koji.ClientSession(kojiserver, {})
+    pkglist = kojiclient.getLatestBuilds(tag)
+    for pkg in pkglist:
+        packages.append(pkg['nvr'])
+    return packages
+
+
 def run(_args, _config):
     """ Beginning the run """
     backend = _config.get('backend', 'db_type')
@@ -114,7 +132,7 @@ def run(_args, _config):
         pkgs = get_packagelist(database, backend)
     assemble_pkgs(pkgs, dest_dir, linktype)
     # And finaly, create the repo.
-    create_repo(pkgs, dest_dir)
+    creakoji.ClientSessionte_repo(pkgs, dest_dir)
     log.debug('dest %s ', dest_dir)
     log.debug('Exiting run()')
 
@@ -265,6 +283,9 @@ def get_args():
     parser.add_argument('-l', '--linktype',
                         action='store', dest='linktype',
                         default='symlink', help='symlink, hardlink, or copy')
+    parser.add_argument('-k', '--koji', action='store',
+                        dest="kojiserver", help='koji server to get info from')
+
 
     _args = parser.parse_args()
     _args.usage = PROJECTNAME + ".py [options]"
@@ -291,6 +312,11 @@ if __name__ == "__main__":
     # Here we start if called directly (the usual case.)
 
     args = get_args()
+
+    if args.kojiserver:
+        kojipkgs = koji_packagelist(args)
+        print kojipkgs
+        sys.exit(0)
 
     if args.debug:
         log.setLevel(logging.DEBUG)
