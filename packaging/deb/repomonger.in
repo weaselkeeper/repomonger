@@ -15,7 +15,7 @@ Copyright: LICENSE
 # Changelog: <changelog file; defaults to a generic changelog>
 Readme: README.md
 Files: repomonger.conf /etc/repomonger
- clone-repo.py /usr/bin
+ kojiscan.py /usr/bin
  repomonger.py /usr/bin
 
 Description: Basic rpm/yum repo management tools.
