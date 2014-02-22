@@ -86,35 +86,8 @@ def get_config(_CONFIGFILE):
     return parser
 
 
-def koji_packagelist():
-    """ for now, just get a list of the packages for a given tag """
-    log.debug('in koji_packagelist')
-    try:
-        import koji
-    except ImportError:
-        log.warn('koji module not available')
-        sys.exit(1)
-
-    packages = []
-    tag = args.kojitag
-    kojiserver = args.kojiserver
-    log.debug('Opening client session to %s', kojiserver)
-    kojiclient = koji.ClientSession(kojiserver, {})
-    pkglist = kojiclient.getLatestBuilds(tag)
-    for pkg in pkglist:
-        packages.append(pkg['nvr'])
-    return packages
-
-
 def run(_args, _config):
     """ Beginning the run """
-
-    # working on koji stuff
-    if args.kojiserver:
-        kojipkgs = koji_packagelist()
-        for pkg in kojipkgs:
-            print pkg
-        sys.exit(0)
 
     backend = _config.get('backend', 'db_type')
     if backend == 'flatfile':
@@ -142,7 +115,7 @@ def run(_args, _config):
         pkgs = get_packagelist(database, backend)
     assemble_pkgs(pkgs, dest_dir, linktype)
     # And finaly, create the repo.
-    creakoji.ClientSessionte_repo(pkgs, dest_dir)
+    create_repo(pkgs, dest_dir)
     log.debug('dest %s ', dest_dir)
     log.debug('Exiting run()')
 
@@ -293,11 +266,6 @@ def get_args():
     parser.add_argument('-l', '--linktype',
                         action='store', dest='linktype',
                         default='symlink', help='symlink, hardlink, or copy')
-    parser.add_argument('-k', '--koji', action='store',
-                        dest="kojiserver", help='koji server to get info from')
-    parser.add_argument('-t', '--tag', action='store',
-                        dest="kojitag", help='koji tag to get info for')
-
 
     _args = parser.parse_args()
     _args.usage = PROJECTNAME + ".py [options]"
