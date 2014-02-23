@@ -51,6 +51,11 @@ def koji_packagelist():
 
 def run():
     """ Beginning the run """
+    if args.config:
+        CONFIG = args.config
+    else:
+        CONFIG = CONFIGFILE
+    parsed_config = parse_config(CONFIGFILE)
     log.debug('entering run()')
     kojipkgs = koji_packagelist()
     for pkg in kojipkgs:
@@ -63,10 +68,7 @@ def get_args():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description='Time to build a yum repo')
-    parser.add_argument('-n', '--dry-run', dest='dryrun',
-        action='store_true', help='Dry run, do not actually perform action',
-        default=False)
+        description='Scan data from koji')
     parser.add_argument('-d', '--debug', dest='debug',
         action='store_true', help='Enable debugging during execution.',
         default=None)
@@ -80,12 +82,23 @@ def get_args():
     parser.add_argument('-t', '--tag', action='store',
                         dest="kojitag", help='koji tag to get info for')
 
-
     _args = parser.parse_args()
     _args.usage = PROJECTNAME + ".py [options]"
 
     return _args
 
+
+def parse_config(_CONFIGFILE):
+    """  Now parse the config file.  Get any and all info from config file.
+    Push items into args, but args override config settings"""
+    parser = SafeConfigParser()
+    if os.path.isfile(_CONFIGFILE):
+        config = _CONFIGFILE
+    else:
+        log.warn('no config file at %s', _CONFIGFILE)
+        sys.exit(1)
+    parser.read(config)
+    return parser
 
 if __name__ == "__main__":
     # Here we start if called directly (the usual case.), currently, the only
@@ -99,6 +112,5 @@ if __name__ == "__main__":
         log.setLevel(logging.WARN)
     if args.config:
         CONFIGFILE = args.config
-
 
     run()
