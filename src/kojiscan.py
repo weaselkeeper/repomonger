@@ -16,7 +16,6 @@ import os
 import sys
 from ConfigParser import SafeConfigParser
 import logging
-import shutil
 import koji
 
 # Setup some basic default stuff
