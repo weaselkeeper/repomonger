@@ -43,7 +43,7 @@ def koji_packagelist(basepath):
     log.debug('Opening client session to %s', kojiserver)
     kojiclient = koji.ClientSession(kojiserver, {})
     pkglist = kojiclient.getLatestRPMS(tag)
-    for pkg in pkglist[0]:
+    for pkg in pkglist[1]:
         pkgname = pkg['name']
         _pkgpath = basepath, pkg['name'], pkg['version'], pkg['release']
         pkgpath = '/'.join(_pkgpath)
