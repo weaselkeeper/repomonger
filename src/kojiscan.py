@@ -34,17 +34,20 @@ logging.getLogger(PROJECTNAME).addHandler(console)
 log = logging.getLogger(PROJECTNAME)
 
 
-def koji_packagelist():
+def koji_packagelist(basepath):
     """ for now, just get a list of the packages for a given tag """
     log.debug('in koji_packagelist')
-    packages = []
+    packages = {}
     tag = args.kojitag
     kojiserver = args.kojiserver
     log.debug('Opening client session to %s', kojiserver)
     kojiclient = koji.ClientSession(kojiserver, {})
-    pkglist = kojiclient.getLatestBuilds(tag)
-    for pkg in pkglist:
-        packages.append(pkg['nvr'])
+    pkglist = kojiclient.getLatestRPMS(tag)
+    for pkg in pkglist[0]:
+        pkgname = pkg['name']
+        _pkgpath = basepath, pkg['name'], pkg['version'], pkg['release']
+        pkgpath = '/'.join(_pkgpath)
+        packages[pkgname]=pkgpath
     return packages
 
 
@@ -54,11 +57,16 @@ def run():
         CONFIG = args.config
     else:
         CONFIG = CONFIGFILE
+    if args.basepath:
+        basepath = args.basepath
+    else:
+        basepath = '/mnt/koji/packages'
+
     parsed_config = parse_config(CONFIGFILE)
     log.debug('entering run()')
-    kojipkgs = koji_packagelist()
-    for pkg in kojipkgs:
-        print pkg
+    kojipkgs = koji_packagelist(basepath)
+    for key in kojipkgs.keys():
+        print kojipkgs[key],  key
     log.debug('Exiting run()')
 
 def get_args():
@@ -80,6 +88,7 @@ def get_args():
                         dest="kojiserver", help='koji server to get info from')
     parser.add_argument('-t', '--tag', action='store',
                         dest="kojitag", help='koji tag to get info for')
+    parser.add_argument('-b', '--basepath', action='store', help='basepath of koji packages')
 
     _args = parser.parse_args()
     _args.usage = PROJECTNAME + ".py [options]"
