@@ -34,23 +34,43 @@ logging.getLogger(PROJECTNAME).addHandler(console)
 log = logging.getLogger(PROJECTNAME)
 
 
-def koji_packagelist(tag):
+def koji_conn(server):
+    log.debug('Starting in koji_conn')
+    conn = koji.ClientSession(server, {} )
+    log.debug('leaving koji_conn')
+    return conn
+
+def koji_packagelist(kojiclient, tag):
     """ for now, just get a list of the packages for a given tag """
     log.debug('in koji_packagelist looking for %s', tag)
     packages = []
-    kojiserver = args.kojiserver
-    log.debug('Opening client session to %s', kojiserver)
-    kojiclient = koji.ClientSession(kojiserver, {})
+    log.debug('Opening client session to ')
     pkglist = kojiclient.getLatestRPMS(tag)
     for pkg in pkglist[1]:
         packages.append(pkg['name'])
+        log.debug(pkg['name'])
     log.debug('leaving koji_packagelist')
     return packages
 
+def koji_rpmlist(conn, tag, basepath, pkg):
+    """ get a list of rpms for package, and make full pathname to return """
+    log.debug('in koji_rpmlist')
+    files = []
+    details = conn.getLatestRPMS(tag, package=pkg)
+    for rpm_pkg in details[0]:
+        filename = rpm_pkg['name'] +'-' + rpm_pkg['version'] + '-' + rpm_pkg['release'] + '.' +rpm_pkg['arch'] + '.rpm'
+        path = basepath,  pkg, rpm_pkg['version'], rpm_pkg['release'], rpm_pkg['arch']
+        pathname = '/'.join(path)
+        fullpath =  pathname + '/' + filename
+        files.append(fullpath)
+        log.debug(fullpath)
+    return files
+    log.debug('leaving koji_rpmlist')
 
 def run():
     """ Beginning the run """
     log.debug('entering run()')
+    filelist = []
     if args.config:
         CONFIG = args.config
     else:
@@ -66,9 +86,21 @@ def run():
         tag = args.kojitag
     else:
         tag = parsed_config.get('kojitag')
-    kojipkgs = koji_packagelist(tag)
+
+    if args.kojiserver:
+        server = args.kojiserver
+    else:
+        server = parsed_config.get('kojiserver')
+
+    conn = koji_conn(server)
+
+    kojipkgs = koji_packagelist(conn, tag)
     for pkg in kojipkgs:
-        print pkg
+        pkgrpms = koji_rpmlist(conn, tag, basepath, pkg)
+        for pkg in pkgrpms:
+            filelist.append(pkg)
+    for file in filelist:
+        print file
     log.debug('Exiting run()')
 
 def get_args():
