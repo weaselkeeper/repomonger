@@ -34,25 +34,23 @@ logging.getLogger(PROJECTNAME).addHandler(console)
 log = logging.getLogger(PROJECTNAME)
 
 
-def koji_packagelist(basepath):
+def koji_packagelist(tag):
     """ for now, just get a list of the packages for a given tag """
-    log.debug('in koji_packagelist')
-    packages = {}
-    tag = args.kojitag
+    log.debug('in koji_packagelist looking for %s', tag)
+    packages = []
     kojiserver = args.kojiserver
     log.debug('Opening client session to %s', kojiserver)
     kojiclient = koji.ClientSession(kojiserver, {})
     pkglist = kojiclient.getLatestRPMS(tag)
     for pkg in pkglist[1]:
-        pkgname = pkg['name']
-        _pkgpath = basepath, pkg['name'], pkg['version'], pkg['release']
-        pkgpath = '/'.join(_pkgpath)
-        packages[pkgname]=pkgpath
+        packages.append(pkg['name'])
+    log.debug('leaving koji_packagelist')
     return packages
 
 
 def run():
     """ Beginning the run """
+    log.debug('entering run()')
     if args.config:
         CONFIG = args.config
     else:
@@ -63,10 +61,14 @@ def run():
         basepath = '/mnt/koji/packages'
 
     parsed_config = parse_config(CONFIGFILE)
-    log.debug('entering run()')
-    kojipkgs = koji_packagelist(basepath)
-    for key in kojipkgs.keys():
-        print kojipkgs[key],  key
+
+    if args.kojitag:
+        tag = args.kojitag
+    else:
+        tag = parsed_config.get('kojitag')
+    kojipkgs = koji_packagelist(tag)
+    for pkg in kojipkgs:
+        print pkg
     log.debug('Exiting run()')
 
 def get_args():
