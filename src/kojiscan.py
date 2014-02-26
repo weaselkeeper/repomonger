@@ -35,10 +35,12 @@ log = logging.getLogger(PROJECTNAME)
 
 
 def koji_conn(server):
+    """ create connection to koji server """
     log.debug('Starting in koji_conn')
-    conn = koji.ClientSession(server, {} )
+    conn = koji.ClientSession(server, {})
     log.debug('leaving koji_conn')
     return conn
+
 
 def koji_packagelist(kojiclient, tag):
     """ for now, just get a list of the packages for a given tag """
@@ -52,20 +54,24 @@ def koji_packagelist(kojiclient, tag):
     log.debug('leaving koji_packagelist')
     return packages
 
+
 def koji_rpmlist(conn, tag, basepath, pkg):
     """ get a list of rpms for package, and make full pathname to return """
     log.debug('in koji_rpmlist')
     files = []
     details = conn.getLatestRPMS(tag, package=pkg)
     for rpm_pkg in details[0]:
-        filename = rpm_pkg['name'] +'-' + rpm_pkg['version'] + '-' + rpm_pkg['release'] + '.' +rpm_pkg['arch'] + '.rpm'
-        path = basepath,  pkg, rpm_pkg['version'], rpm_pkg['release'], rpm_pkg['arch']
+        filename = rpm_pkg['name'] + '-' + rpm_pkg['version'] + '-' +\
+            rpm_pkg['release'] + '.' + rpm_pkg['arch'] + '.rpm'
+        path = basepath, pkg, rpm_pkg['version'], rpm_pkg['release'],\
+            rpm_pkg['arch']
         pathname = '/'.join(path)
-        fullpath =  pathname + '/' + filename
+        fullpath = pathname + '/' + filename
         files.append(fullpath)
         log.debug(fullpath)
-    return files
     log.debug('leaving koji_rpmlist')
+    return files
+
 
 def run():
     """ Beginning the run """
@@ -80,7 +86,7 @@ def run():
     else:
         basepath = '/mnt/koji/packages'
 
-    parsed_config = parse_config(CONFIGFILE)
+    parsed_config = parse_config(CONFIG)
 
     if args.kojitag:
         tag = args.kojitag
@@ -99,9 +105,10 @@ def run():
         pkgrpms = koji_rpmlist(conn, tag, basepath, pkg)
         for pkg in pkgrpms:
             filelist.append(pkg)
-    for file in filelist:
-        print file
+    for _file in filelist:
+        print _file
     log.debug('Exiting run()')
+
 
 def get_args():
     """ Parse the command line options """
@@ -111,18 +118,19 @@ def get_args():
     parser = argparse.ArgumentParser(
         description='Scan data from koji')
     parser.add_argument('-d', '--debug', dest='debug',
-        action='store_true', help='Enable debugging during execution.',
-        default=None)
+                        action='store_true', help='Enable debugging.',
+                        default=None)
     parser.add_argument('-c', '--config',
-        action='store', default=None,
-        help='Specify a path to an alternate config file')
+                        action='store', default=None,
+                        help='Specify a path to an alternate config file')
     parser.add_argument('-D', '--dst', action='store',
                         dest="destdir", help='Topdir of cloned repo')
     parser.add_argument('-k', '--koji', action='store',
                         dest="kojiserver", help='koji server to get info from')
     parser.add_argument('-t', '--tag', action='store',
                         dest="kojitag", help='koji tag to get info for')
-    parser.add_argument('-b', '--basepath', action='store', help='basepath of koji packages')
+    parser.add_argument('-b', '--basepath', action='store',
+                        help='basepath of koji packages')
 
     _args = parser.parse_args()
     _args.usage = PROJECTNAME + ".py [options]"
