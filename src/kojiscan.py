@@ -163,4 +163,4 @@ if __name__ == "__main__":
     if args.config:
         CONFIGFILE = args.config
 
-    run()
+    sys.exit(run())

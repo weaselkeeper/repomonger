@@ -302,4 +302,4 @@ if __name__ == "__main__":
 
     _parse_config = get_config(CONFIGFILE)
 
-    run(args, _parse_config)
+    sys.exit(run(args, _parse_config))
