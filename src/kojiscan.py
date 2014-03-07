@@ -19,7 +19,7 @@ import logging
 import koji
 
 # Setup some basic default stuff
-CONFIGFILE = '/etc/repomonger/kojiscan.conf'
+CONFIGFILE = '/etc/repomonger/repomonger.conf'
 PROJECTNAME = 'kojiscan'
 
 # Setup logging
