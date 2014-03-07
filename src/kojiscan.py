@@ -91,12 +91,12 @@ def run():
     if args.kojitag:
         tag = args.kojitag
     else:
-        tag = parsed_config.get('kojitag')
+        tag = parsed_config.get('koji', 'tag')
 
     if args.kojiserver:
         server = args.kojiserver
     else:
-        server = parsed_config.get('kojiserver')
+        server = parsed_config.get('koji', 'serverurl')
 
     conn = koji_conn(server)
 
