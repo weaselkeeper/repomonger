@@ -143,7 +143,7 @@ def assemble_pkgs(pkglisting, _dir, linktype):
 
     elif linktype == 'hardlink':
         for pkg in pkglisting:
-            _path, _file = os.path.split(pkg)
+            _file = os.path.split(pkg)[1]
             linkedfile = _dir + '/' + _file
             os.link(pkg, linkedfile)
         msg, success = 'pkgs hardinked', 0
@@ -151,7 +151,7 @@ def assemble_pkgs(pkglisting, _dir, linktype):
 
     elif linktype == 'symlink':
         for pkg in pkglisting:
-            _path, _file = os.path.split(pkg)
+            _file = os.path.split(pkg)[1]
             linkedfile = _dir + '/' + _file
             try:
 
