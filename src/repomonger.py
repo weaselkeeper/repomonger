@@ -213,7 +213,7 @@ def get_clonepackagelist(src_repo):
             try:
                 # Ensuring this is an RPM pkg, not just some file with rpm ext.
                 # We don't actually use the variable except in this test
-                hdr = ts.hdrFromFdno(fdno)
+                ts.hdrFromFdno(fdno)
             except rpm.error, e:
                 # Eating errors from signed packages where
                 # we don't have the key
