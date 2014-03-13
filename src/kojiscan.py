@@ -105,9 +105,11 @@ def run(args):
         pkgrpms = koji_rpmlist(conn, tag, basepath, pkg)
         for pkg in pkgrpms:
             filelist.append(pkg)
-    for _file in filelist:
-        print _file
+    if args.debug:
+        for _file in filelist:
+            log.debug(_file)
     log.debug('Exiting run()')
+    return filelist
 
 
 def get_args():
@@ -163,4 +165,4 @@ if __name__ == "__main__":
     if args.config:
         CONFIGFILE = args.config
 
-    sys.exit(run(args))
+    filelist=run(args)
