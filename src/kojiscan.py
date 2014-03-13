@@ -73,7 +73,7 @@ def koji_rpmlist(conn, tag, basepath, pkg):
     return files
 
 
-def run():
+def run(args):
     """ Beginning the run """
     log.debug('entering run()')
     filelist = []
@@ -163,4 +163,4 @@ if __name__ == "__main__":
     if args.config:
         CONFIGFILE = args.config
 
-    sys.exit(run())
+    sys.exit(run(args))
