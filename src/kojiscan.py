@@ -165,4 +165,4 @@ if __name__ == "__main__":
     if args.config:
         CONFIGFILE = args.config
 
-    filelist=run(args)
+    filelist = run(args)
