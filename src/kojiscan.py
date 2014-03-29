@@ -103,28 +103,28 @@ def koji_rpmlist(conn, tag, basepath, pkg):
     return files
 
 
-def run(args):
+def run(_args):
     """ Beginning the run """
     log.debug('entering run()')
-    filelist = []
-    if args.config:
-        CONFIG = args.config
+    _filelist = []
+    if _args.config:
+        CONFIG = _args.config
     else:
         CONFIG = CONFIGFILE
-    if args.basepath:
-        basepath = args.basepath
+    if _args.basepath:
+        basepath = _args.basepath
     else:
         basepath = '/mnt/koji/packages'
 
     parsed_config = parse_config(CONFIG)
 
-    if args.kojitag:
-        tag = args.kojitag
+    if _args.kojitag:
+        tag = _args.kojitag
     else:
         tag = parsed_config.get('koji', 'tag')
 
-    if args.kojiserver:
-        server = args.kojiserver
+    if _args.kojiserver:
+        server = _args.kojiserver
     else:
         server = parsed_config.get('koji', 'serverurl')
 
@@ -134,12 +134,12 @@ def run(args):
     for pkg in kojipkgs:
         pkgrpms = koji_rpmlist(conn, tag, basepath, pkg)
         for pkg in pkgrpms:
-            filelist.append(pkg)
-    if args.debug:
-        for _file in filelist:
+            _filelist.append(pkg)
+    if _args.debug:
+        for _file in _filelist:
             log.debug(_file)
     log.debug('Exiting run()')
-    return filelist
+    return _filelist
 
 
 def get_args():
