@@ -93,7 +93,7 @@ def koji_rpmlist(conn, tag, basepath, pkg):
     for rpm_pkg in details[0]:
         filename = rpm_pkg['name'] + '-' + rpm_pkg['version'] + '-' +\
             rpm_pkg['release'] + '.' + rpm_pkg['arch'] + '.rpm'
-        path = basepath, pkg, rpm_pkg['version'], rpm_pkg['release'],\
+        path = basepath, pkg, rpm_pkg['version'], rpm_pkg['release'], \
             rpm_pkg['arch']
         pathname = '/'.join(path)
         fullpath = pathname + '/' + filename
