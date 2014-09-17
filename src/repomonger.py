@@ -313,7 +313,7 @@ def mongo_connection(_config):
         con = Connection(_host)
         col = con[_database][_collection]
         return col
-    except  Exception as e:
+    except  pymongo.errors.PyMongoError as e:
         log.warn('Error, python reports %s', e)
         sys.exit(1)
 
