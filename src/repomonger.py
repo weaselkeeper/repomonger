@@ -33,7 +33,7 @@
 """ Repomonger is a simple repo clone/build script.  You can clone an existing
 repo in a new location, using copies, hardlinks, or symlinks.  Or you can
 create a new repo from a list of file locations, again, either copying, or
-linking to the specified files.
+linking to the specified files.  Currently it is for yum repos only.
 
 
 License: GPL V2 See LICENSE file
