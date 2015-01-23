@@ -26,4 +26,24 @@ Alternatively, each repo can be a document in a mongodb instance, but that's
 for the future
 
 
+usage: repomonger.py [-h] [-n] [-d] [-C] [-c CONFIG] [-R REPO]
+                     [-S SOURCE_REPO] [-D DESTDIR] [-l LINKTYPE]
+
+Time to build a yum repo
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n, --dry-run         Dry run, do not actually perform action
+  -d, --debug           Enable debugging during execution.
+  -C, --clone           clone existing repo rather than create from a list of
+                        pkgs
+  -c CONFIG, --config CONFIG
+                        Specify a path to an alternate config file
+  -R REPO, --repo REPO  Name of repo to build. See definition in config
+  -S SOURCE_REPO, --src SOURCE_REPO
+                        Repo to clone.
+  -D DESTDIR, --dst DESTDIR
+                        Topdir of cloned repo
+  -l LINKTYPE, --linktype LINKTYPE
+                        symlink, hardlink, or copy
 
