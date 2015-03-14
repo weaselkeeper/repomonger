@@ -75,7 +75,7 @@ yum rpm, and createrepo python modules.', error)
     sys.exit(1)
 
 try:
-    from pymongo import Connection
+    pymongo vimport Connection
 
 except ImportError as error:
     log.warn('Failed import of pymmongo, system says %s', error)
@@ -313,7 +313,7 @@ def mongo_connection(_config):
         con = Connection(_host)
         col = con[_database][_collection]
         return col
-    except  pymongo.errors.PyMongoError as e:
+    except  Connection.errors.PyMongoError as e:
         log.warn('Error, python reports %s', e)
         sys.exit(1)
 
