@@ -209,7 +209,7 @@ def create_repo(clone_target, clone_dest):
         #mid_st = time.time()
         try:
             mdgen = createrepo.SplitMetaDataGenerator(config_obj=conf,
-                     callback=MDCallBack())
+                                                      callback=MDCallBack())
         except:
             log.warn('something when wrong with mdgen creation')
 
