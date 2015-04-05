@@ -309,7 +309,7 @@ def mongo_connection(_config):
     _collection = _config.get('backend', 'collection')
     try:
         log.debug('connecting to host %s for collection %s', _host,
-                _collection)
+                  _collection)
         con = Connection(_host)
         col = con[_database][_collection]
         return col
