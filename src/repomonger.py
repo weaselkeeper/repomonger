@@ -276,8 +276,9 @@ def get_args():
     parser = argparse.ArgumentParser(
         description='Time to build a yum repo')
     parser.add_argument('-n', '--dry-run', dest='dryrun',
-        action='store_true', help='Dry run, do not actually perform action',
-        default=False)
+                        action='store_true',
+                        help='Dry run, do not actually perform action',
+                        default=False)
     parser.add_argument('-d', '--debug', dest='debug',
         action='store_true', help='Enable debugging during execution.',
         default=None)
