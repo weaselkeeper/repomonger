@@ -280,8 +280,8 @@ def get_args():
                         help='Dry run, do not actually perform action',
                         default=False)
     parser.add_argument('-d', '--debug', dest='debug',
-        action='store_true', help='Enable debugging during execution.',
-        default=None)
+                        action='store_true', default=None,
+                        help='Enable debugging during execution.')
     parser.add_argument('-C', '--clone', action='store_true',
         help='clone existing repo rather than create from a list of pkgs')
     parser.add_argument('-c', '--config',
