@@ -283,7 +283,7 @@ def get_args():
                         action='store_true', default=None,
                         help='Enable debugging during execution.')
     parser.add_argument('-C', '--clone', action='store_true',
-        help='clone existing repo rather than create from a list of pkgs')
+                        help='clone existing repo')
     parser.add_argument('-c', '--config',
         action='store', default=None,
         help='Specify a path to an alternate config file')
