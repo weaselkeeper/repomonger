@@ -285,8 +285,8 @@ def get_args():
     parser.add_argument('-C', '--clone', action='store_true',
                         help='clone existing repo')
     parser.add_argument('-c', '--config',
-        action='store', default=None,
-        help='Specify a path to an alternate config file')
+                        action='store', help='Specify a path to an alt conf',
+                        default=None)
     parser.add_argument('-R', '--repo', action='store', default=None,
         help='Name of repo to build. See definition in config')
     parser.add_argument('-S', '--src', action='store',
