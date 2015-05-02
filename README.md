@@ -3,10 +3,10 @@ Repo-Monger is a first attempt at making a lightweight yum repo manager.
 I find myself needing to create clones of existing repos, with one or two
 changes for testing, then blow them away and update the main repo.  This is a
 pain to do manually, thus bringing us to Repo-monger.  It is an attempt to make
-a lightweigh yum repo manager, with the features I need, but lacking the
+a lightweight yum repo manager, with the features I need, but lacking the
 breadth of toolsets such as pulp, or Spacewalk.  Those are good tools, but they
 have a lot more features than I need, and do a whole lot more than mere repo
-management.
+management. (And require a fair bit more in the way of setup and support)
 
 The goals for repo-monger are as follows.
 
@@ -22,8 +22,7 @@ Alternatively, clone an existing repo in a new location, useful when doing
 cascade style updates, but you want to be able to freeze the original repo
 while you work on issues.
 
-Alternatively, each repo can be a document in a mongodb instance, but that's
-for the future
+[TODO] Mongo backend?
 
 
 usage: repomonger.py [-h] [-n] [-d] [-C] [-c CONFIG] [-R REPO]
