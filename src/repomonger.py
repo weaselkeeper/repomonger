@@ -292,7 +292,7 @@ def get_args():
     parser.add_argument('-S', '--src', action='store',
                         dest='source_repo', help='Repo to clone.')
     parser.add_argument('-D', '--dst', action='store',
-                        dest="destdir", help='Topdir of cloned repo')
+                        dest="destdir", help='Destination of cloned repo')
     parser.add_argument('-l', '--linktype',
                         action='store', dest='linktype',
                         default='symlink', help='symlink, hardlink, or copy')
