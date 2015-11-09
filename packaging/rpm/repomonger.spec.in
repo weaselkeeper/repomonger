@@ -12,7 +12,6 @@ BuildArch:      noarch
 Requires:       python
 Requires:       rpm-python
 Requires:       python-argparse
-Requires:       python-simplejson
 
 %description
 A few utilities to clone, copy, assemble, and otherwise make available, yum
