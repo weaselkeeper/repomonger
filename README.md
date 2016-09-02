@@ -29,7 +29,7 @@ usage: repomonger.py [-h] [-n] [-d] [-C] [-c CONFIG] [-R REPO]
                      [-S SOURCE_REPO] [-D DESTDIR] [-l LINKTYPE]
 
 Time to build a yum repo
-
+```
 optional arguments:
   -h, --help            show this help message and exit
   -n, --dry-run         Dry run, do not actually perform action
@@ -45,4 +45,4 @@ optional arguments:
                         Topdir of cloned repo
   -l LINKTYPE, --linktype LINKTYPE
                         symlink, hardlink, or copy
-
+```
